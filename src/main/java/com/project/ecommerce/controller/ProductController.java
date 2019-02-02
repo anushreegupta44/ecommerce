@@ -4,7 +4,9 @@ import com.project.ecommerce.dto.ProductDto;
 import com.project.ecommerce.model.Category;
 import com.project.ecommerce.service.CategoryService;
 import com.project.ecommerce.service.ProductService;
+import com.project.ecommerce.util.ValidationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,6 +45,17 @@ public class ProductController {
       return created(URI.create("/product/" + productId)).build();
     } else
       return notFound().build();
+  }
+
+  @DeleteMapping("/product/{id}")
+  public ResponseEntity deleteProduct(@PathVariable("id") Integer productId) {
+    ValidationResponse res = productService.validateProductWithIdExists(productId);
+    if (res.getErrors() != null) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res.getErrors());
+    } else {
+      productService.remove(productId);
+      return noContent().build();
+    }
   }
 
   private ResponseEntity validateProductDto(ProductDto productDto) {

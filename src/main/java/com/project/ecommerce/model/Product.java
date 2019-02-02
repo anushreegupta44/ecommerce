@@ -12,7 +12,7 @@ public class Product {
   private String name;
   private String description;
 
-  @ManyToMany(cascade = {CascadeType.ALL})
+  @ManyToMany(cascade = {CascadeType.PERSIST})
   @JoinTable(name = "product_category",
       joinColumns = {@JoinColumn(name = "product_id")},
       inverseJoinColumns = {@JoinColumn(name = "category_id")})

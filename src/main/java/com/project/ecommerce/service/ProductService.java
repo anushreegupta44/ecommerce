@@ -7,10 +7,12 @@ import com.project.ecommerce.model.Product;
 import com.project.ecommerce.repository.CategoryRepository;
 import com.project.ecommerce.repository.InventoryRepository;
 import com.project.ecommerce.repository.ProductRepository;
+import com.project.ecommerce.util.ValidationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -67,6 +69,19 @@ public class ProductService {
     productDto.setCategories(categoryDtos);
     productDto.setAvailableQuantity(availableProductQuantity);
     return productDto;
+  }
+
+  public ValidationResponse validateProductWithIdExists(Integer productId) {
+    Optional<Product> product = productRepository.findById(productId);
+    if (!product.isPresent()) {
+      return new ValidationResponse(false, new HashMap<String, String>() {{
+        put("product", "product.does.not.exist");
+      }});
+    } else return new ValidationResponse(true, null);
+  }
+
+  public void remove(Integer productId) {
+    productRepository.deleteById(productId);
   }
 }
 
