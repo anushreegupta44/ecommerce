@@ -1,12 +1,16 @@
 package com.project.ecommerce.service;
 
+import com.project.ecommerce.dto.CategoryDto;
 import com.project.ecommerce.dto.ProductDto;
+import com.project.ecommerce.model.Category;
 import com.project.ecommerce.model.Product;
 import com.project.ecommerce.repository.InventoryRepository;
 import com.project.ecommerce.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -33,7 +37,13 @@ public class ProductService {
     ProductDto productDto = new ProductDto();
     productDto.setName(product.getName());
     productDto.setDescription(product.getDescription());
-    productDto.setCategories(product.getCategories());
+    List<CategoryDto> categoryDtos = new ArrayList<>();
+    for (Category category :
+        product.getCategories()) {
+      CategoryDto categoryDto = new CategoryDto(category.getName());
+      categoryDtos.add(categoryDto);
+    }
+    productDto.setCategories(categoryDtos);
     productDto.setAvailableQuantity(availableProductQuantity);
     return productDto;
   }

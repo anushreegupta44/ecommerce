@@ -1,20 +1,18 @@
 package com.project.ecommerce.dto;
 
-import com.project.ecommerce.model.Category;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProductDto {
   private String name;
   private String description;
-  private List<Category> categories = new ArrayList<>();
+  private List<CategoryDto> categories = new ArrayList<>();
   private Integer availableQuantity;
 
   public ProductDto() {
   }
 
-  public ProductDto(String name, String description, List<Category> categories, Integer availableQuantity) {
+  public ProductDto(String name, String description, List<CategoryDto> categories, Integer availableQuantity) {
     this.name = name;
     this.description = description;
     this.categories = categories;
@@ -37,11 +35,11 @@ public class ProductDto {
     this.description = description;
   }
 
-  public List<Category> getCategories() {
+  public List<CategoryDto> getCategories() {
     return categories;
   }
 
-  public void setCategories(List<Category> categories) {
+  public void setCategories(List<CategoryDto> categories) {
     this.categories = categories;
   }
 
