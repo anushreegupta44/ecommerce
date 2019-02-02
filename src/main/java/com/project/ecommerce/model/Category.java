@@ -35,7 +35,6 @@ public class Category {
     this.name = name;
   }
 
-  @JsonIgnore
   public List<Product> getProducts() {
     return products;
   }

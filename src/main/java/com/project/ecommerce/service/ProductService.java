@@ -4,6 +4,7 @@ import com.project.ecommerce.dto.CategoryDto;
 import com.project.ecommerce.dto.ProductDto;
 import com.project.ecommerce.model.Category;
 import com.project.ecommerce.model.Product;
+import com.project.ecommerce.repository.CategoryRepository;
 import com.project.ecommerce.repository.InventoryRepository;
 import com.project.ecommerce.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,9 @@ public class ProductService {
   @Autowired
   InventoryRepository inventoryRepository;
 
+  @Autowired
+  CategoryRepository categoryRepository;
+
   public ProductDto getProductById(Integer productId) {
 
     Optional<Product> product = productRepository.findById(productId);
@@ -31,6 +35,23 @@ public class ProductService {
       return productDto;
     } else
       return null;
+  }
+
+  public Integer createProduct(ProductDto productDto) {
+    Product product = new Product();
+    product.setName(productDto.getName());
+    product.setDescription(productDto.getDescription());
+    List<Category> categories = new ArrayList<>();
+    for (CategoryDto categoryDto :
+        productDto.getCategories()) {
+      Optional<Category> category = categoryRepository.getCategoryByName(categoryDto.getName());
+      if (category.isPresent()) {
+        categories.add(category.get());
+      }
+    }
+    product.setCategories(categories);
+    Product savedProduct = productRepository.save(product);
+    return savedProduct.getId();
   }
 
   private ProductDto convertProductToProductDto(Product product, Integer availableProductQuantity) {
