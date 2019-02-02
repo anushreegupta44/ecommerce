@@ -22,13 +22,11 @@ public class ProductService {
     Optional<Product> product = productRepository.findById(productId);
     if (product.isPresent()) {
       //get the total number of inventory that is not sold for this product
-      Integer invCountForProduct = inventoryRepository.getInventoriesByProduct_Id(productId).size();
+      Integer invCountForProduct = inventoryRepository.getInventoriesByProduct_IdAndSoldFalse(productId).size();
       ProductDto productDto = convertProductToProductDto(product.get(), invCountForProduct);
       return productDto;
     } else
       return null;
-
-
   }
 
   private ProductDto convertProductToProductDto(Product product, Integer availableProductQuantity) {

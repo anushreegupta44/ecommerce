@@ -14,7 +14,7 @@ public interface InventoryRepository extends JpaRepository<Inventory, Integer> {
 //      "FROM Inventory where product_id=:productId")
 //  long getTotalQtyNotSold(@Param("productId") Integer productId);
 
-  List<Inventory> getInventoriesByProduct_Id(Integer productId);
+  List<Inventory> getInventoriesByProduct_IdAndSoldFalse(Integer productId);
 
 
 }
