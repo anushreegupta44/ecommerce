@@ -32,7 +32,9 @@ public class ProductController {
   @GetMapping("/{id}")
   public ResponseEntity getProductDetails(@PathVariable("id") Integer productId) {
     ProductDto productDto = productService.getProductById(productId);
-    return productDto == null ? noContent().build() : ok(productDto);
+    return productDto == null ? ResponseEntity.status(HttpStatus.NOT_FOUND).body(new HashMap<String, String>() {{
+      put("product", "product.does.not.exist");
+    }}) : ok(productDto);
   }
 
   @PostMapping
