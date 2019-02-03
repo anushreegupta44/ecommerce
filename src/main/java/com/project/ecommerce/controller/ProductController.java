@@ -67,8 +67,8 @@ public class ProductController {
       errorMessages.put("product_category", "product_category.not.present");
     }
     List<Category> categoryList = categoryService.validateCategories(productDto.getCategories());
-    if (categoryList.isEmpty()) {
-      errorMessages.put("product_categories", "product_category.do.not.match");
+    if (isNull(categoryList)) {
+      errorMessages.put("product_categories", "product_category.does.not.exist");
     }
     if (!errorMessages.isEmpty()) {
       return unprocessableEntity().body(errorMessages);
