@@ -1,8 +1,7 @@
 package com.project.ecommerce.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Customer {
@@ -12,6 +11,9 @@ public class Customer {
   private String name;
   private String address;
   private String phone;
+
+  @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "customer")
+  private List<CartItem> cartItems;
 
   public Customer() {
   }
@@ -52,5 +54,13 @@ public class Customer {
 
   public void setPhone(String phone) {
     this.phone = phone;
+  }
+
+  public List<CartItem> getCartItems() {
+    return cartItems;
+  }
+
+  public void setCartItems(List<CartItem> cartItems) {
+    this.cartItems = cartItems;
   }
 }

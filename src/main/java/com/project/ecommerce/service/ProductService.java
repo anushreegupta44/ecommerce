@@ -28,7 +28,6 @@ public class ProductService {
   CategoryRepository categoryRepository;
 
   public ProductDto getProductById(Integer productId) {
-
     Optional<Product> product = productRepository.findById(productId);
     if (product.isPresent()) {
       //get the total number of inventory that is not sold for this product

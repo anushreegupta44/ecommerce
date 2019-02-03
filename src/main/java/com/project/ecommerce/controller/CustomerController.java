@@ -3,22 +3,17 @@ package com.project.ecommerce.controller;
 import com.project.ecommerce.dto.CustomerDto;
 import com.project.ecommerce.model.Customer;
 import com.project.ecommerce.service.CustomerService;
+import com.project.ecommerce.util.ValidationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
-import java.util.HashMap;
 
-import static java.util.Objects.isNull;
-import static org.springframework.http.ResponseEntity.created;
-import static org.springframework.http.ResponseEntity.notFound;
+import static org.springframework.http.ResponseEntity.*;
 
 @RestController
 public class CustomerController {
@@ -39,6 +34,17 @@ public class CustomerController {
       return created(URI.create("/customer/" + customer.getId())).build();
     } else
       return notFound().build();
+  }
+
+  @DeleteMapping("/customer/{id}")
+  public ResponseEntity deleteCustomerDetails(@PathVariable("id") Integer customerId) {
+    ValidationResponse res = customerService.validateCustomerExists(customerId);
+    if (res.getErrors() != null) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res.getErrors());
+    } else {
+      customerService.remove(customerId);
+      return noContent().build();
+    }
   }
 
 
