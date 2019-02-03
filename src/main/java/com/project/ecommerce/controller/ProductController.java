@@ -19,6 +19,7 @@ import static java.util.Objects.isNull;
 import static org.springframework.http.ResponseEntity.*;
 
 @RestController
+@RequestMapping("/products")
 public class ProductController {
 
   @Autowired
@@ -28,13 +29,13 @@ public class ProductController {
   CategoryService categoryService;
 
   //Get the details of a product, its quantity in stock and the categories it belongs to
-  @GetMapping("/product/{pid}")
-  public ResponseEntity getProductDetails(@PathVariable("pid") Integer productId) {
+  @GetMapping("/{id}")
+  public ResponseEntity getProductDetails(@PathVariable("id") Integer productId) {
     ProductDto productDto = productService.getProductById(productId);
     return productDto == null ? noContent().build() : ok(productDto);
   }
 
-  @PostMapping("/product")
+  @PostMapping
   public ResponseEntity createProduct(@RequestBody ProductDto productDto) {
     ResponseEntity requestDtoError = validateProductDto(productDto);
     if (requestDtoError != null) {
@@ -47,7 +48,7 @@ public class ProductController {
       return notFound().build();
   }
 
-  @DeleteMapping("/product/{id}")
+  @DeleteMapping("/{id}")
   public ResponseEntity deleteProduct(@PathVariable("id") Integer productId) {
     ValidationResponse res = productService.validateProductWithIdExists(productId);
     if (res.getErrors() != null) {
