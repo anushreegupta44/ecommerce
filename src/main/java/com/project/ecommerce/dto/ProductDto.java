@@ -12,6 +12,12 @@ public class ProductDto {
   public ProductDto() {
   }
 
+  public ProductDto(String name, String description, List<CategoryDto> categories) {
+    this.name = name;
+    this.description = description;
+    this.categories = categories;
+  }
+
   public ProductDto(String name, String description, List<CategoryDto> categories, Integer availableQuantity) {
     this.name = name;
     this.description = description;

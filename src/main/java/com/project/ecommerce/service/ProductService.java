@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Objects.isNull;
+
 @Service
 public class ProductService {
   @Autowired
@@ -81,6 +83,31 @@ public class ProductService {
 
   public void remove(Integer productId) {
     productRepository.deleteById(productId);
+  }
+
+  public void updateProduct(Integer productId, ProductDto productDto) {
+    Optional<Product> productOptional = productRepository.findById(productId);
+    Product product = productOptional.get();
+    product.setName(productDto.getName());
+    product.setDescription(productDto.getDescription());
+    product.setCategories(updateProductCategories(product, productDto));
+    productRepository.save(product);
+  }
+
+  protected List<Category> updateProductCategories(Product product, ProductDto productDto) {
+    if (!isNull(product.getCategories()) && product.getCategories().equals(productDto.getCategories()))
+      return product.getCategories();
+    else {
+      List<Category> updatedCategories = product.getCategories();
+      for (CategoryDto categoryDto :
+          productDto.getCategories()) {
+        Optional<Category> categoryOptional = categoryRepository.getCategoryByName(categoryDto.getName());
+        if (categoryOptional.isPresent() && !product.getCategories().contains(categoryOptional.get())) {
+          updatedCategories.add(categoryOptional.get());
+        }
+      }
+      return updatedCategories;
+    }
   }
 }
 

@@ -18,6 +18,15 @@ public class Product {
       inverseJoinColumns = {@JoinColumn(name = "category_id")})
   private List<Category> categories = new ArrayList<>();
 
+  public Product() {
+  }
+
+  public Product(String name, String description, List<Category> categories) {
+    this.name = name;
+    this.description = description;
+    this.categories = categories;
+  }
+
   public Integer getId() {
     return id;
   }

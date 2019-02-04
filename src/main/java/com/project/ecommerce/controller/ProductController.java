@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
@@ -57,6 +58,17 @@ public class ProductController {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res.getErrors());
     } else {
       productService.remove(productId);
+      return noContent().build();
+    }
+  }
+
+  @PutMapping("/{id}")
+  public ResponseEntity updateProduct(@PathVariable("id") Integer productId, @RequestBody @Valid ProductDto productDto) {
+    ValidationResponse res = productService.validateProductWithIdExists(productId);
+    if (res.getErrors() != null) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res.getErrors());
+    } else {
+      productService.updateProduct(productId, productDto);
       return noContent().build();
     }
   }
