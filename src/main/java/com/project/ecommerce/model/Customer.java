@@ -12,7 +12,8 @@ public class Customer {
   private String address;
   private String phone;
 
-  @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "customer")
+  @OneToMany(cascade = CascadeType.REMOVE)
+  @JoinColumn(name = "customer_id")
   private List<CartItem> cartItems;
 
   public Customer() {
