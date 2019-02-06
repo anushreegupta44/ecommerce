@@ -88,4 +88,11 @@ public class ProductController {
     } else
       return null;
   }
+
+  @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Product not found")
+  @ExceptionHandler(ProductNotFoundException.class)
+  public void productNotFoundExceptionHandler() {
+    System.out.print("Product not found Exception");
+  }
+
 }
