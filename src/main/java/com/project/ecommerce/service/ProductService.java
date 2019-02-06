@@ -2,6 +2,7 @@ package com.project.ecommerce.service;
 
 import com.project.ecommerce.dto.CategoryDto;
 import com.project.ecommerce.dto.ProductDto;
+import com.project.ecommerce.exception.CategoryNotFoundException;
 import com.project.ecommerce.exception.ProductNotFoundException;
 import com.project.ecommerce.model.Category;
 import com.project.ecommerce.model.Product;
@@ -12,43 +13,40 @@ import com.project.ecommerce.util.ValidationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 
 @Service
 public class ProductService {
   @Autowired
-  ProductRepository productRepository;
+  private ProductRepository productRepository;
 
   @Autowired
-  InventoryRepository inventoryRepository;
+  private InventoryRepository inventoryRepository;
 
   @Autowired
-  CategoryRepository categoryRepository;
+  private CategoryService categoryService;
+
+  @Autowired
+  private CategoryRepository categoryRepository;
 
   public Product getProductById(Integer productId) throws ProductNotFoundException {
     return productRepository.findById(productId).orElseThrow(() -> new ProductNotFoundException());
   }
 
-  public Integer createProduct(ProductDto productDto) {
-    Product product = new Product();
-    product.setName(productDto.getName());
-    product.setDescription(productDto.getDescription());
-    List<Category> categories = new ArrayList<>();
-    for (CategoryDto categoryDto :
-        productDto.getCategories()) {
-      Optional<Category> category = categoryRepository.getCategoryByName(categoryDto.getName());
-      if (category.isPresent()) {
-        categories.add(category.get());
+  public Product createProduct(Product productToAdd) {
+    List<Category> categories = productToAdd.getCategories().stream().map(category -> {
+      try {
+        return categoryService.getCategoryByName(category.getName());
+      } catch (CategoryNotFoundException e) {
+        return null;
       }
-    }
-    product.setCategories(categories);
-    Product savedProduct = productRepository.save(product);
-    return savedProduct.getId();
+    }).collect(Collectors.toList());
+    categories.removeAll(Collections.singleton(null));
+    productToAdd.setCategories(categories);
+    return productRepository.save(productToAdd);
   }
 
   private ProductDto convertProductToProductDto(Product product, Integer availableProductQuantity) {

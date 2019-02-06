@@ -37,16 +37,8 @@ public class ProductController {
   }
 
   @PostMapping
-  public ResponseEntity createProduct(@RequestBody ProductDto productDto) {
-    ResponseEntity requestDtoError = validateProductDto(productDto);
-    if (requestDtoError != null) {
-      return requestDtoError;
-    }
-    Integer productId = productService.createProduct(productDto);
-    if (productId != null) {
-      return created(URI.create("/product/" + productId)).build();
-    } else
-      return notFound().build();
+  public Product createProduct(@RequestBody @Valid Product product) {
+    return productService.createProduct(product);
   }
 
   @DeleteMapping("/{id}")
@@ -69,24 +61,6 @@ public class ProductController {
       productService.updateProduct(productId, productDto);
       return noContent().build();
     }
-  }
-
-  private ResponseEntity validateProductDto(ProductDto productDto) {
-    Map<String, String> errorMessages = new HashMap<>();
-    if (isNull(productDto.getName())) {
-      errorMessages.put("product", "product.not.present");
-    }
-    if (isNull(productDto.getCategories())) {
-      errorMessages.put("product_category", "product_category.not.present");
-    }
-    List<Category> categoryList = categoryService.validateCategories(productDto.getCategories());
-    if (isNull(categoryList)) {
-      errorMessages.put("product_categories", "product_category.does.not.exist");
-    }
-    if (!errorMessages.isEmpty()) {
-      return unprocessableEntity().body(errorMessages);
-    } else
-      return null;
   }
 
 }
