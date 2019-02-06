@@ -1,6 +1,7 @@
 package com.project.ecommerce.controller;
 
 import com.project.ecommerce.dto.ProductDto;
+import com.project.ecommerce.exception.ProductNotFoundException;
 import com.project.ecommerce.model.Category;
 import com.project.ecommerce.model.Product;
 import com.project.ecommerce.service.CategoryService;
@@ -31,12 +32,8 @@ public class ProductController {
   CategoryService categoryService;
 
   @GetMapping("/{id}")
-  public ResponseEntity<Product> getProductDetails(@PathVariable("id") Integer productId) {
-    try {
-      return new ResponseEntity(productService.getProductById(productId), HttpStatus.OK);
-    } catch (RuntimeException e) {
-      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
+  public ResponseEntity<Product> getProductDetails(@PathVariable("id") Integer productId) throws ProductNotFoundException {
+    return new ResponseEntity(productService.getProductById(productId), HttpStatus.OK);
   }
 
   @PostMapping

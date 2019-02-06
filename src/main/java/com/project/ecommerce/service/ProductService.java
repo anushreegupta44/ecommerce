@@ -2,6 +2,7 @@ package com.project.ecommerce.service;
 
 import com.project.ecommerce.dto.CategoryDto;
 import com.project.ecommerce.dto.ProductDto;
+import com.project.ecommerce.exception.ProductNotFoundException;
 import com.project.ecommerce.model.Category;
 import com.project.ecommerce.model.Product;
 import com.project.ecommerce.repository.CategoryRepository;
@@ -29,8 +30,8 @@ public class ProductService {
   @Autowired
   CategoryRepository categoryRepository;
 
-  public Product getProductById(Integer productId) {
-    return productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product not found"));
+  public Product getProductById(Integer productId) throws ProductNotFoundException {
+    return productRepository.findById(productId).orElseThrow(() -> new ProductNotFoundException());
   }
 
   public Integer createProduct(ProductDto productDto) {
