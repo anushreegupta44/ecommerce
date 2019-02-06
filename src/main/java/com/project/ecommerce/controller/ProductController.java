@@ -2,6 +2,7 @@ package com.project.ecommerce.controller;
 
 import com.project.ecommerce.dto.ProductDto;
 import com.project.ecommerce.model.Category;
+import com.project.ecommerce.model.Product;
 import com.project.ecommerce.service.CategoryService;
 import com.project.ecommerce.service.ProductService;
 import com.project.ecommerce.util.ValidationResponse;
@@ -29,13 +30,13 @@ public class ProductController {
   @Autowired
   CategoryService categoryService;
 
-  //Get the details of a product, its quantity in stock and the categories it belongs to
   @GetMapping("/{id}")
-  public ResponseEntity getProductDetails(@PathVariable("id") Integer productId) {
-    ProductDto productDto = productService.getProductById(productId);
-    return productDto == null ? ResponseEntity.status(HttpStatus.NOT_FOUND).body(new HashMap<String, String>() {{
-      put("product", "product.does.not.exist");
-    }}) : ok(productDto);
+  public ResponseEntity<Product> getProductDetails(@PathVariable("id") Integer productId) {
+    try {
+      return new ResponseEntity(productService.getProductById(productId), HttpStatus.OK);
+    } catch (RuntimeException e) {
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
   }
 
   @PostMapping

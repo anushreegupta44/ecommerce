@@ -29,15 +29,8 @@ public class ProductService {
   @Autowired
   CategoryRepository categoryRepository;
 
-  public ProductDto getProductById(Integer productId) {
-    Optional<Product> product = productRepository.findById(productId);
-    if (product.isPresent()) {
-      //get the total number of inventory that is not sold for this product
-      Integer invCountForProduct = inventoryRepository.getInventoriesByProduct_IdAndSoldFalse(productId).size();
-      ProductDto productDto = convertProductToProductDto(product.get(), invCountForProduct);
-      return productDto;
-    } else
-      return null;
+  public Product getProductById(Integer productId) {
+    return productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product not found"));
   }
 
   public Integer createProduct(ProductDto productDto) {
