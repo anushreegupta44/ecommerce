@@ -68,5 +68,9 @@ public class ProductService {
     categories.removeAll(Collections.singleton(null));
     return categories;
   }
+
+  public List<Product> getAllProducts() {
+    return productRepository.findAll();
+  }
 }
 

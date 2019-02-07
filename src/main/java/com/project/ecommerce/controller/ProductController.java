@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 import static org.springframework.http.ResponseEntity.noContent;
 
@@ -38,5 +39,10 @@ public class ProductController {
   @PutMapping("/{id}")
   public ResponseEntity<Product> updateProduct(@PathVariable("id") Integer productId, @RequestBody @Valid Product product) throws ProductNotFoundException {
     return new ResponseEntity(productService.updateProduct(productId, product), HttpStatus.OK);
+  }
+
+  @GetMapping
+  public List<Product> getProductList() {
+    return productService.getAllProducts();
   }
 }

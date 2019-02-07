@@ -104,4 +104,18 @@ public class ProductControllerTest {
     assertThat(errorMessage, is("Product not found"));
 
   }
+
+  @Test
+  public void shouldGetListOfProducts() throws Exception {
+    Product product = new Product("product", "description of product", null);
+    when(productService.getAllProducts()).thenReturn(Arrays.asList(product));
+    MvcResult result = mockMvc.perform(
+        get("/products")
+    ).andExpect(status().isOk())
+        .andReturn();
+    String content = result.getResponse().getContentAsString();
+    assertThat(content, is("[{\"id\":null,\"name\":\"product\",\"description\":\"description of product\",\"categories\":null}]"));
+  }
+
+
 }
