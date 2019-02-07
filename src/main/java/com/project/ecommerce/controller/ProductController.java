@@ -2,7 +2,6 @@ package com.project.ecommerce.controller;
 
 import com.project.ecommerce.dto.ProductDto;
 import com.project.ecommerce.exception.ProductNotFoundException;
-import com.project.ecommerce.model.Category;
 import com.project.ecommerce.model.Product;
 import com.project.ecommerce.service.CategoryService;
 import com.project.ecommerce.service.ProductService;
@@ -13,13 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import static java.util.Objects.isNull;
-import static org.springframework.http.ResponseEntity.*;
+import static org.springframework.http.ResponseEntity.noContent;
 
 @RestController
 @RequestMapping("/products")
@@ -42,14 +36,9 @@ public class ProductController {
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity deleteProduct(@PathVariable("id") Integer productId) {
-    ValidationResponse res = productService.validateProductWithIdExists(productId);
-    if (res.getErrors() != null) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res.getErrors());
-    } else {
-      productService.remove(productId);
-      return noContent().build();
-    }
+  public ResponseEntity deleteProduct(@PathVariable("id") Integer productId) throws ProductNotFoundException {
+    productService.remove(productId);
+    return noContent().build();
   }
 
   @PutMapping("/{id}")

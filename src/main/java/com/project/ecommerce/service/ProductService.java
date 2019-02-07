@@ -73,7 +73,8 @@ public class ProductService {
     } else return new ValidationResponse(true, null);
   }
 
-  public void remove(Integer productId) {
+  public void remove(Integer productId) throws ProductNotFoundException {
+    this.getProductById(productId);
     productRepository.deleteById(productId);
   }
 

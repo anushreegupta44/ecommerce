@@ -6,6 +6,7 @@ import com.project.ecommerce.model.Product;
 import com.project.ecommerce.service.ProductService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,6 +18,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -53,5 +55,16 @@ public class ProductControllerTest {
         .andReturn();
     String errorMessage = result.getResponse().getErrorMessage();
     assertThat(errorMessage, is("Product not found"));
+  }
+
+  @Test
+  public void shouldNotDeleteProduct() throws Exception {
+    Mockito.doThrow(new ProductNotFoundException()).when(productService).remove(2);
+    mockMvc.perform(delete("/products/2")).andExpect(status().isNotFound());
+  }
+
+  @Test
+  public void shouldDeleteProduct() throws Exception {
+    mockMvc.perform(delete("/products/2")).andExpect(status().isNoContent());
   }
 }
