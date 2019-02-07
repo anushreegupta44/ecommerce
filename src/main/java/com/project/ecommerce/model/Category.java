@@ -2,8 +2,10 @@ package com.project.ecommerce.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +19,13 @@ public class Category {
   @ManyToMany(mappedBy = "categories")
   @JsonIgnore
   private List<Product> products = new ArrayList<>();
+
+  public Category() {
+  }
+
+  public Category(String name) {
+    this.name = name;
+  }
 
   public Integer getId() {
     return id;

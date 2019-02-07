@@ -1,11 +1,9 @@
 package com.project.ecommerce.controller;
 
-import com.project.ecommerce.dto.ProductDto;
 import com.project.ecommerce.exception.ProductNotFoundException;
 import com.project.ecommerce.model.Product;
 import com.project.ecommerce.service.CategoryService;
 import com.project.ecommerce.service.ProductService;
-import com.project.ecommerce.util.ValidationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,14 +40,8 @@ public class ProductController {
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity updateProduct(@PathVariable("id") Integer productId, @RequestBody @Valid ProductDto productDto) {
-    ValidationResponse res = productService.validateProductWithIdExists(productId);
-    if (res.getErrors() != null) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res.getErrors());
-    } else {
-      productService.updateProduct(productId, productDto);
-      return noContent().build();
-    }
+  public ResponseEntity<Product> updateProduct(@PathVariable("id") Integer productId, @RequestBody @Valid Product product) throws ProductNotFoundException {
+    return new ResponseEntity(productService.updateProduct(productId, product), HttpStatus.OK);
   }
 
 }

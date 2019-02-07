@@ -1,22 +1,20 @@
 package com.project.ecommerce.service;
 
-import com.project.ecommerce.dto.CategoryDto;
-import com.project.ecommerce.dto.ProductDto;
 import com.project.ecommerce.exception.CategoryNotFoundException;
 import com.project.ecommerce.exception.ProductNotFoundException;
 import com.project.ecommerce.model.Category;
 import com.project.ecommerce.model.Product;
-import com.project.ecommerce.repository.CategoryRepository;
-import com.project.ecommerce.repository.InventoryRepository;
 import com.project.ecommerce.repository.ProductRepository;
 import com.project.ecommerce.util.ValidationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static java.util.Objects.isNull;
+import java.util.stream.Stream;
 
 @Service
 public class ProductService {
@@ -24,44 +22,16 @@ public class ProductService {
   private ProductRepository productRepository;
 
   @Autowired
-  private InventoryRepository inventoryRepository;
-
-  @Autowired
   private CategoryService categoryService;
-
-  @Autowired
-  private CategoryRepository categoryRepository;
 
   public Product getProductById(Integer productId) throws ProductNotFoundException {
     return productRepository.findById(productId).orElseThrow(() -> new ProductNotFoundException());
   }
 
   public Product createProduct(Product productToAdd) {
-    List<Category> categories = productToAdd.getCategories().stream().map(category -> {
-      try {
-        return categoryService.getCategoryByName(category.getName());
-      } catch (CategoryNotFoundException e) {
-        return null;
-      }
-    }).collect(Collectors.toList());
-    categories.removeAll(Collections.singleton(null));
+    List<Category> categories = getValidCategories(productToAdd);
     productToAdd.setCategories(categories);
     return productRepository.save(productToAdd);
-  }
-
-  private ProductDto convertProductToProductDto(Product product, Integer availableProductQuantity) {
-    ProductDto productDto = new ProductDto();
-    productDto.setName(product.getName());
-    productDto.setDescription(product.getDescription());
-    List<CategoryDto> categoryDtos = new ArrayList<>();
-    for (Category category :
-        product.getCategories()) {
-      CategoryDto categoryDto = new CategoryDto(category.getName());
-      categoryDtos.add(categoryDto);
-    }
-    productDto.setCategories(categoryDtos);
-    productDto.setAvailableQuantity(availableProductQuantity);
-    return productDto;
   }
 
   public ValidationResponse validateProductWithIdExists(Integer productId) {
@@ -78,29 +48,25 @@ public class ProductService {
     productRepository.deleteById(productId);
   }
 
-  public void updateProduct(Integer productId, ProductDto productDto) {
-    Optional<Product> productOptional = productRepository.findById(productId);
-    Product product = productOptional.get();
-    product.setName(productDto.getName());
-    product.setDescription(productDto.getDescription());
-    product.setCategories(updateProductCategories(product, productDto));
-    productRepository.save(product);
+  public Product updateProduct(Integer productId, Product product) throws ProductNotFoundException {
+    Product productToUpdate = this.getProductById(productId);
+    productToUpdate.setName(product.getName());
+    productToUpdate.setDescription(product.getDescription());
+    List<Category> categoriesToUpdate = getValidCategories(product);
+    productToUpdate.setCategories(Stream.concat(productToUpdate.getCategories().stream(), categoriesToUpdate.stream()).distinct().collect(Collectors.toList()));
+    return productRepository.save(productToUpdate);
   }
 
-  protected List<Category> updateProductCategories(Product product, ProductDto productDto) {
-    if (!isNull(product.getCategories()) && product.getCategories().equals(productDto.getCategories()))
-      return product.getCategories();
-    else {
-      List<Category> updatedCategories = product.getCategories();
-      for (CategoryDto categoryDto :
-          productDto.getCategories()) {
-        Optional<Category> categoryOptional = categoryRepository.getCategoryByName(categoryDto.getName());
-        if (categoryOptional.isPresent() && !product.getCategories().contains(categoryOptional.get())) {
-          updatedCategories.add(categoryOptional.get());
-        }
+  public List<Category> getValidCategories(Product product) {
+    List<Category> categories = product.getCategories().stream().map(category -> {
+      try {
+        return categoryService.getCategoryByName(category.getName());
+      } catch (CategoryNotFoundException e) {
+        return null;
       }
-      return updatedCategories;
-    }
+    }).collect(Collectors.toList());
+    categories.removeAll(Collections.singleton(null));
+    return categories;
   }
 }
 
