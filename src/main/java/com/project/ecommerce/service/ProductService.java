@@ -69,6 +69,7 @@ public class ProductService {
     return categories;
   }
 
+  //TODO ask if this can be optimised
   public List<Product> getAllProducts() {
     return productRepository.findAll();
   }

@@ -15,19 +15,24 @@ public class Product {
   @NotNull
   private String description;
 
-  @ManyToMany(cascade = {CascadeType.PERSIST})
+  @ManyToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY)
   @JoinTable(name = "product_category",
       joinColumns = {@JoinColumn(name = "product_id")},
       inverseJoinColumns = {@JoinColumn(name = "category_id")})
-  private List<Category> categories = new ArrayList<>();
+  private List<Category> categories;
+
+  @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY)
+  @JoinColumn(name = "product_id")
+  private List<Inventory> inventories;
 
   public Product() {
   }
 
-  public Product(String name, String description, List<Category> categories) {
+  public Product(@NotNull String name, @NotNull String description, List<Category> categories, List<Inventory> inventories) {
     this.name = name;
     this.description = description;
     this.categories = categories;
+    this.inventories = inventories;
   }
 
   public Integer getId() {
@@ -60,5 +65,13 @@ public class Product {
 
   public void setCategories(List<Category> categories) {
     this.categories = categories;
+  }
+
+  public List<Inventory> getInventories() {
+    return inventories;
+  }
+
+  public void setInventories(List<Inventory> inventories) {
+    this.inventories = inventories;
   }
 }
