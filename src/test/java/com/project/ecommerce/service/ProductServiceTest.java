@@ -2,6 +2,7 @@ package com.project.ecommerce.service;
 
 import com.project.ecommerce.dto.CategoryDto;
 import com.project.ecommerce.dto.ProductDto;
+import com.project.ecommerce.exception.ProductNotFoundException;
 import com.project.ecommerce.model.Category;
 import com.project.ecommerce.model.Product;
 import com.project.ecommerce.repository.CategoryRepository;
@@ -11,6 +12,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
@@ -104,5 +106,22 @@ public class ProductServiceTest {
     when(productRepository.findById(product.getId())).thenReturn(Optional.ofNullable(product));
     ValidationResponse response = productService.validateProductWithIdExists(product.getId());
     assertThat(response.getValid(), is(true));
+  }
+
+  @Test
+  public void shouldRemoveProductIfProductIdExists() throws ProductNotFoundException {
+    Product product = mock(Product.class);
+    ProductService spyProductService = Mockito.spy(productService);
+    Mockito.doReturn(product).when(spyProductService).getProductById(Mockito.any());
+    spyProductService.remove(product.getId());
+    verify(productRepository).deleteById(product.getId());
+  }
+
+  @Test(expected = ProductNotFoundException.class)
+  public void shouldNotRemoveProductIfProductIdExists() throws ProductNotFoundException {
+    Product product = mock(Product.class);
+    ProductService spyProductService = Mockito.spy(productService);
+    doThrow(new ProductNotFoundException()).when(spyProductService).getProductById(Mockito.anyInt());
+    spyProductService.remove(product.getId());
   }
 }
