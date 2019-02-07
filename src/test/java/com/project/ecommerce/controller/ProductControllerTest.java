@@ -46,7 +46,7 @@ public class ProductControllerTest {
 
   @Test
   public void shouldGetProduct() throws Exception {
-    Product product = new Product("product", "description of product", null);
+    Product product = new Product("product", "description of product", null, null);
     when(productService.getProductById(1)).thenReturn(product);
     mockMvc.perform(
         get("/products/1")
@@ -79,7 +79,7 @@ public class ProductControllerTest {
 
   @Test
   public void shouldUpdateProduct() throws Exception {
-    Product incomingProduct = new Product("name", "description", Arrays.asList(new Category("category1")));
+    Product incomingProduct = new Product("name", "description", Arrays.asList(new Category("category1")), null);
     String incomingProductJson = objectMapper.writeValueAsString(incomingProduct);
     when(productService.updateProduct(2, incomingProduct)).thenReturn(incomingProduct);
     mockMvc.perform(
@@ -91,7 +91,7 @@ public class ProductControllerTest {
 
   @Test
   public void shouldThrowExceptionIfProductNotFoundUpdate() throws Exception {
-    Product incomingProduct = new Product("name", "description", Arrays.asList(new Category("category1")));
+    Product incomingProduct = new Product("name", "description", Arrays.asList(new Category("category1")), null);
     String incomingProductJson = objectMapper.writeValueAsString(incomingProduct);
     when(productService.updateProduct(eq(2), any(Product.class))).thenThrow(new ProductNotFoundException());
 
@@ -107,14 +107,15 @@ public class ProductControllerTest {
 
   @Test
   public void shouldGetListOfProducts() throws Exception {
-    Product product = new Product("product", "description of product", null);
+    Product product = new Product("product", "description of product", null, null);
     when(productService.getAllProducts()).thenReturn(Arrays.asList(product));
     MvcResult result = mockMvc.perform(
         get("/products")
     ).andExpect(status().isOk())
         .andReturn();
     String content = result.getResponse().getContentAsString();
-    assertThat(content, is("[{\"id\":null,\"name\":\"product\",\"description\":\"description of product\",\"categories\":null}]"));
+    System.out.print(content);
+    assertThat(content, is("[{\"id\":null,\"name\":\"product\",\"description\":\"description of product\",\"categories\":null,\"inventories\":null}]"));
   }
 
 

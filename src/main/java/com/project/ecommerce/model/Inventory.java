@@ -1,6 +1,7 @@
 package com.project.ecommerce.model;
 
-import javax.persistence.CascadeType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -11,6 +12,7 @@ public class Inventory {
   private String sku;
 
   @ManyToOne
+  @JsonIgnore
   private Product product;
 
   private Boolean sold;

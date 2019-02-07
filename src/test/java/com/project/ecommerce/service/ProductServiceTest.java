@@ -74,7 +74,7 @@ public class ProductServiceTest {
   public void shouldReturnValidCategories() throws CategoryNotFoundException {
     Category category1 = new Category("category1");
     Category category2 = new Category("category2");
-    Product product = new Product("name", "description", Arrays.asList(category1, category2));
+    Product product = new Product("name", "description", Arrays.asList(category1, category2),null);
     when(categoryService.getCategoryByName(anyString())).thenReturn(category1).thenThrow(new CategoryNotFoundException());
     List<Category> validCategories = productService.getValidCategories(product);
     assertThat(validCategories.size(), is(1));
