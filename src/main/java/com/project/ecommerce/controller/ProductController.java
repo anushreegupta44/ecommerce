@@ -2,7 +2,6 @@ package com.project.ecommerce.controller;
 
 import com.project.ecommerce.exception.ProductNotFoundException;
 import com.project.ecommerce.model.Product;
-import com.project.ecommerce.service.CategoryService;
 import com.project.ecommerce.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,9 +18,6 @@ public class ProductController {
 
   @Autowired
   ProductService productService;
-
-  @Autowired
-  CategoryService categoryService;
 
   @GetMapping("/{id}")
   public Product getProductDetails(@PathVariable("id") Integer productId) throws ProductNotFoundException {
@@ -43,5 +39,4 @@ public class ProductController {
   public ResponseEntity<Product> updateProduct(@PathVariable("id") Integer productId, @RequestBody @Valid Product product) throws ProductNotFoundException {
     return new ResponseEntity(productService.updateProduct(productId, product), HttpStatus.OK);
   }
-
 }

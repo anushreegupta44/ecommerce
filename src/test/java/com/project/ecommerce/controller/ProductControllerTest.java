@@ -56,7 +56,7 @@ public class ProductControllerTest {
   }
 
   @Test
-  public void shouldThrowProductNotFoundExceptionForProductNotFoundInDb() throws Exception {
+  public void shouldThrowExceptionForProductNotFoundInDbGet() throws Exception {
     when(productService.getProductById(2)).thenThrow(new ProductNotFoundException());
     MvcResult result = mockMvc.perform(
         get("/products/2")
@@ -67,7 +67,7 @@ public class ProductControllerTest {
   }
 
   @Test
-  public void shouldNotDeleteProduct() throws Exception {
+  public void shouldNotDeleteProductIfProductNotFoundInDb() throws Exception {
     Mockito.doThrow(new ProductNotFoundException()).when(productService).remove(2);
     mockMvc.perform(delete("/products/2")).andExpect(status().isNotFound());
   }
@@ -90,7 +90,7 @@ public class ProductControllerTest {
   }
 
   @Test
-  public void shouldThrowExceptionIfProductNotFound() throws Exception {
+  public void shouldThrowExceptionIfProductNotFoundUpdate() throws Exception {
     Product incomingProduct = new Product("name", "description", Arrays.asList(new Category("category1")));
     String incomingProductJson = objectMapper.writeValueAsString(incomingProduct);
     when(productService.updateProduct(eq(2), any(Product.class))).thenThrow(new ProductNotFoundException());
