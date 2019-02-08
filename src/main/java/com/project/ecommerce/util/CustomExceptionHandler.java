@@ -1,5 +1,7 @@
 package com.project.ecommerce.util;
 
+import com.project.ecommerce.exception.CategoryNotFoundException;
+import com.project.ecommerce.exception.CustomerNotFoundException;
 import com.project.ecommerce.exception.ProductNotFoundException;
 import com.project.ecommerce.model.ErrorDetails;
 import org.springframework.http.HttpHeaders;
@@ -18,9 +20,21 @@ import java.util.Date;
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
   @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Product not found")
-  @ExceptionHandler(ProductNotFoundException.class)
+  @ExceptionHandler({ProductNotFoundException.class})
   public void productNotFoundExceptionHandler() {
     System.out.print("Product not found Exception\n");
+  }
+
+  @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Customer not found")
+  @ExceptionHandler({CustomerNotFoundException.class})
+  public void customerNotFoundExceptionHandler() {
+    System.out.print("Customer not found Exception\n");
+  }
+
+  @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Category not found")
+  @ExceptionHandler({CategoryNotFoundException.class})
+  public void categoryNotFoundExceptionHandler() {
+    System.out.print("Category not found Exception\n");
   }
 
   @Override

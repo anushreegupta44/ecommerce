@@ -4,7 +4,6 @@ import com.project.ecommerce.exception.CategoryNotFoundException;
 import com.project.ecommerce.exception.ProductNotFoundException;
 import com.project.ecommerce.model.Category;
 import com.project.ecommerce.model.Product;
-import com.project.ecommerce.repository.CategoryRepository;
 import com.project.ecommerce.repository.ProductRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,9 +22,6 @@ import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ProductServiceTest {
-
-  @Mock
-  private CategoryRepository categoryRepository;
 
   @Mock
   private ProductRepository productRepository;

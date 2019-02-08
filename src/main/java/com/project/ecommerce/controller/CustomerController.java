@@ -1,19 +1,16 @@
 package com.project.ecommerce.controller;
 
-import com.project.ecommerce.dto.CustomerDto;
+import com.project.ecommerce.exception.CustomerNotFoundException;
 import com.project.ecommerce.model.Customer;
 import com.project.ecommerce.service.CustomerService;
-import com.project.ecommerce.util.ValidationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import java.net.URI;
 
-import static org.springframework.http.ResponseEntity.*;
+import static org.springframework.http.ResponseEntity.noContent;
 
 @RestController
 public class CustomerController {
@@ -22,29 +19,21 @@ public class CustomerController {
   private CustomerService customerService;
 
   //I do not create an endpoint for getting all customers because a user will only be able to get their own information and hence details only about themselves
-  @GetMapping("/customer")
-  public ResponseEntity getCustomerDetails() {
-    return null;
+  @GetMapping("/customers/{id}")
+  public ResponseEntity getCustomerDetails(@PathVariable("id") Integer customerId) throws CustomerNotFoundException {
+    return ResponseEntity.status(HttpStatus.OK).body(customerService.getCustomerDetails(customerId));
   }
 
-  @PostMapping()
-  public ResponseEntity createCustomerDetails(@RequestBody @Valid @NotNull CustomerDto customerDto) {
-    Customer customer = customerService.createCustomerDetails(customerDto);
-    if (customer != null) {
-      return created(URI.create("/customer/" + customer.getId())).build();
-    } else
-      return notFound().build();
+  @PostMapping("/customers")
+  public ResponseEntity<Customer> createCustomerDetails(@RequestBody @Valid Customer customer) {
+    Customer savedCustomer = customerService.createCustomerDetails(customer);
+    return ResponseEntity.status(HttpStatus.OK).body(savedCustomer);
   }
 
-  @DeleteMapping("/customer/{id}")
-  public ResponseEntity deleteCustomerDetails(@PathVariable("id") Integer customerId) {
-    ValidationResponse res = customerService.validateCustomerExists(customerId);
-    if (res.getErrors() != null) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res.getErrors());
-    } else {
-      customerService.remove(customerId);
-      return noContent().build();
-    }
+  @DeleteMapping("/customers/{id}")
+  public ResponseEntity deleteCustomerDetails(@PathVariable("id") Integer customerId) throws CustomerNotFoundException {
+    customerService.remove(customerId);
+    return noContent().build();
   }
 
 
