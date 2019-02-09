@@ -50,15 +50,6 @@ public class InventoryServiceTest {
   }
 
   @Test
-  public void shouldMarkInventoryInCartAndSaveIt() {
-    Inventory inventory = mock(Inventory.class);
-    inventory.setStatus(InventoryStatus.AVAILABLE);
-    inventoryService.markInventoryAsInCart(inventory);
-    verify(inventoryRepository).save(inventory);
-    verify(inventory).setStatus(InventoryStatus.IN_CART);
-  }
-
-  @Test
   public void givesAvailableInventoryToAdd() throws InventoryNotFoundException {
     Product product = mock(Product.class);
     Inventory availableInventory1 = new Inventory();
@@ -82,4 +73,12 @@ public class InventoryServiceTest {
     assert inventory.getStatus().equals(InventoryStatus.IN_CART);
   }
 
+  @Test
+  public void shouldMArkInventoryStatus() {
+    Inventory inventory = mock(Inventory.class);
+    inventory.setStatus(InventoryStatus.AVAILABLE);
+    inventoryService.markInventoryWithStatus(inventory, InventoryStatus.IN_CART);
+    verify(inventoryRepository).save(inventory);
+    verify(inventory).setStatus(InventoryStatus.IN_CART);
+  }
 }

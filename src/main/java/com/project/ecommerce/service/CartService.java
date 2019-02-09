@@ -5,6 +5,7 @@ import com.project.ecommerce.exception.InventoryNotFoundException;
 import com.project.ecommerce.model.Cart;
 import com.project.ecommerce.model.Customer;
 import com.project.ecommerce.model.Inventory;
+import com.project.ecommerce.model.InventoryStatus;
 import com.project.ecommerce.repository.CartRepository;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ public class CartService {
     Inventory availableInventory = inventoryService.getInventoryToAdd(productId);
     Cart cart = this.getCartById(cartId);
     cartInventoryService.mapCartToInventory(cart, availableInventory);
-    inventoryService.markInventoryAsInCart(availableInventory);
+    inventoryService.markInventoryWithStatus(availableInventory, InventoryStatus.IN_CART);
   }
 
   public Cart getCartById(Integer cartId) throws CartNotFoundException {
@@ -40,5 +41,10 @@ public class CartService {
   public Cart createCartForUser(Customer savedCustomer) {
     Cart cart = new Cart(savedCustomer, null);
     return cartRepository.save(cart);
+  }
+
+  //Removing a product from cart is essentially deleting a cartInventory
+  public void removeProductFromCart(Integer cartId, Integer productId) throws InventoryNotFoundException {
+    cartInventoryService.deleteCartInventory(cartId, productId);
   }
 }

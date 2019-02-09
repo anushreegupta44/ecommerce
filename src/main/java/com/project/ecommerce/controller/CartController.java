@@ -6,13 +6,11 @@ import com.project.ecommerce.service.CartService;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityExistsException;
+import static org.springframework.http.ResponseEntity.noContent;
 
 @RestController
 @RequestMapping("/cart")
@@ -25,6 +23,13 @@ public class CartController {
   public ResponseEntity addItemToCart(@PathVariable("cartId") Integer cartId,
                                       @PathVariable("productId") Integer productId) throws InventoryNotFoundException, CartNotFoundException, DataIntegrityViolationException, ConstraintViolationException {
     cartService.addProductToCart(cartId, productId);
-    return null;
+    return new ResponseEntity(HttpStatus.OK);
+  }
+
+  @DeleteMapping("/{cartId}/product/{productId}")
+  public ResponseEntity deleteItemFromCart(@PathVariable("cartId") Integer cartId,
+                                           @PathVariable("productId") Integer productId) throws InventoryNotFoundException {
+    cartService.removeProductFromCart(cartId, productId);
+    return noContent().build();
   }
 }

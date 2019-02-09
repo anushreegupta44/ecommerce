@@ -4,6 +4,7 @@ import com.project.ecommerce.exception.CartNotFoundException;
 import com.project.ecommerce.exception.InventoryNotFoundException;
 import com.project.ecommerce.model.Cart;
 import com.project.ecommerce.model.Inventory;
+import com.project.ecommerce.model.InventoryStatus;
 import com.project.ecommerce.model.Product;
 import com.project.ecommerce.repository.CategoryRepository;
 import org.junit.Test;
@@ -72,7 +73,13 @@ public class CartServiceTest {
     doReturn(cart).when(spyCartService).getCartById(Mockito.anyInt());
     spyCartService.addProductToCart(cart.getId(), product.getId());
     verify(cartInventoryService).mapCartToInventory(cart, inventory);
-    verify(inventoryService).markInventoryAsInCart(inventory);
+    verify(inventoryService).markInventoryWithStatus(inventory, InventoryStatus.IN_CART);
+  }
+
+  @Test(expected = InventoryNotFoundException.class)
+  public void shouldThrowAnExceptionIfNoInventoryForProductExistsInCart() throws InventoryNotFoundException {
+    doThrow(new InventoryNotFoundException()).when(cartInventoryService).deleteCartInventory(anyInt(), anyInt());
+    cartService.removeProductFromCart(2, 2);
   }
 
 

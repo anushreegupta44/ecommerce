@@ -30,13 +30,6 @@ public class InventoryService {
     return new ValidationResponse(true, null);
   }
 
-  //marking the inventory as IN_CART after adding to cart
-  public Inventory markInventoryAsInCart(Inventory inventoryToAdd) {
-    inventoryToAdd.setStatus(InventoryStatus.IN_CART);
-    Inventory savedInventory = inventoryRepository.save(inventoryToAdd);
-    return savedInventory;
-  }
-
   //getting an inventory for the product that is AVAILABLE. If no inventory is AVAILABLE, getting inventory that is IN_CART but not in the same cart
   public Inventory getInventoryToAdd(Integer productId) throws InventoryNotFoundException {
     List<Inventory> availableInventoryList = inventoryRepository.findInventoriesByProduct_IdAndStatus(productId, InventoryStatus.AVAILABLE);
@@ -49,5 +42,11 @@ public class InventoryService {
 
   private Inventory getInventoryInCart(Integer productId) throws InventoryNotFoundException {
     return inventoryRepository.findInventoriesByProduct_IdAndStatus(productId, InventoryStatus.IN_CART).stream().findAny().orElseThrow(() -> new InventoryNotFoundException());
+  }
+
+  public Inventory markInventoryWithStatus(Inventory inventory, InventoryStatus status) {
+    inventory.setStatus(status);
+    Inventory savedInventory = inventoryRepository.save(inventory);
+    return savedInventory;
   }
 }
