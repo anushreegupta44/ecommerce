@@ -1,6 +1,8 @@
 package com.project.ecommerce.service;
 
+import com.project.ecommerce.exception.InventoryNotFoundException;
 import com.project.ecommerce.model.Inventory;
+import com.project.ecommerce.model.InventoryStatus;
 import com.project.ecommerce.repository.InventoryRepository;
 import com.project.ecommerce.util.ValidationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Objects.isNull;
 
@@ -18,7 +21,7 @@ public class InventoryService {
   private InventoryRepository inventoryRepository;
 
   public ValidationResponse validateInventoryForProductExists(Integer productId) {
-    List<Inventory> inventoryAvailableForSale = inventoryRepository.getInventoriesByProduct_IdAndSoldFalse(productId);
+    List<Inventory> inventoryAvailableForSale = inventoryRepository.findInventoriesByProduct_IdAndStatus(productId, InventoryStatus.AVAILABLE);
     if (isNull(inventoryAvailableForSale) || inventoryAvailableForSale.size() == 0) {
       return new ValidationResponse(false, new HashMap<String, String>() {{
         put("inventory", "inventory.empty.for.product");
@@ -27,9 +30,24 @@ public class InventoryService {
     return new ValidationResponse(true, null);
   }
 
-  public Inventory markInventoryAsSold(Inventory inventoryToAdd) {
-    inventoryToAdd.setSold(true);
+  //marking the inventory as IN_CART after adding to cart
+  public Inventory markInventoryAsInCart(Inventory inventoryToAdd) {
+    inventoryToAdd.setStatus(InventoryStatus.IN_CART);
     Inventory savedInventory = inventoryRepository.save(inventoryToAdd);
     return savedInventory;
+  }
+
+  //getting an inventory for the product that is AVAILABLE. If no inventory is AVAILABLE, getting inventory that is IN_CART but not in the same cart
+  public Inventory getInventoryToAdd(Integer productId) throws InventoryNotFoundException {
+    List<Inventory> availableInventoryList = inventoryRepository.findInventoriesByProduct_IdAndStatus(productId, InventoryStatus.AVAILABLE);
+    Optional<Inventory> availableInventory = availableInventoryList.stream().findAny();
+    if (availableInventory.isPresent()) {
+      return availableInventory.get();
+    } else
+      return getInventoryInCart(productId);
+  }
+
+  private Inventory getInventoryInCart(Integer productId) throws InventoryNotFoundException {
+    return inventoryRepository.findInventoriesByProduct_IdAndStatus(productId, InventoryStatus.IN_CART).stream().findAny().orElseThrow(() -> new InventoryNotFoundException());
   }
 }

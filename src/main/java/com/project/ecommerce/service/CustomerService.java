@@ -1,12 +1,14 @@
 package com.project.ecommerce.service;
 
 import com.project.ecommerce.exception.CustomerNotFoundException;
+import com.project.ecommerce.model.Cart;
 import com.project.ecommerce.model.Customer;
 import com.project.ecommerce.repository.CustomerRepository;
 import com.project.ecommerce.util.ValidationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -16,8 +18,13 @@ public class CustomerService {
   @Autowired
   private CustomerRepository customerRepository;
 
+  @Autowired
+  private CartService cartService;
+
+  @Transactional
   public Customer createCustomerDetails(Customer customer) {
     Customer savedCustomer = customerRepository.save(customer);
+    cartService.createCartForUser(savedCustomer);
     return savedCustomer;
   }
 

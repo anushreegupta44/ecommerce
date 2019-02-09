@@ -25,12 +25,16 @@ public class CustomerServiceTest {
   @Mock
   private CustomerRepository customerRepository;
 
+  @Mock
+  private CartService cartService;
+
   @Test
   public void shouldReturnCustomerWhenDetailsSavedSuccessfully() {
     Customer customer = mock(Customer.class);
     when(customerRepository.save(customer)).thenReturn(customer);
     Customer savedCustomer = customerService.createCustomerDetails(customer);
     assertThat(savedCustomer, is(customer));
+    verify(cartService).createCartForUser(customer);
   }
 
   @Test

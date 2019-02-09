@@ -32,7 +32,6 @@ public class ProductServiceTest {
   @Mock
   private CategoryService categoryService;
 
-
   @Test
   public void shouldUpdateProduct() throws ProductNotFoundException {
     Product product = mock(Product.class);

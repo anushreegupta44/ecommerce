@@ -2,9 +2,8 @@ package com.project.ecommerce.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Inventory {
@@ -15,7 +14,22 @@ public class Inventory {
   @JsonIgnore
   private Product product;
 
-  private Boolean sold;
+  @Enumerated(EnumType.STRING)
+  private InventoryStatus status;
+
+  @OneToMany
+  @JoinColumn(name = "INVENTORY_SKU")
+  private List<CartInventory> carts;
+
+  public Inventory() {
+  }
+
+  public Inventory(String sku, Product product, InventoryStatus status, List<CartInventory> carts) {
+    this.sku = sku;
+    this.product = product;
+    this.status = status;
+    this.carts = carts;
+  }
 
   public String getSku() {
     return sku;
@@ -33,11 +47,19 @@ public class Inventory {
     this.product = product;
   }
 
-  public Boolean getSold() {
-    return sold;
+  public InventoryStatus getStatus() {
+    return status;
   }
 
-  public void setSold(Boolean sold) {
-    this.sold = sold;
+  public void setStatus(InventoryStatus status) {
+    this.status = status;
+  }
+
+  public List<CartInventory> getCarts() {
+    return carts;
+  }
+
+  public void setCarts(List<CartInventory> carts) {
+    this.carts = carts;
   }
 }

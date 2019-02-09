@@ -1,8 +1,6 @@
 package com.project.ecommerce.model;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @Entity
 public class Customer {
@@ -12,10 +10,6 @@ public class Customer {
   private String name;
   private String address;
   private String phone;
-
-  @OneToMany(cascade = CascadeType.REMOVE)
-  @JoinColumn(name = "customer_id")
-  private List<CartItem> cartItems;
 
   public Customer() {
   }
@@ -58,11 +52,4 @@ public class Customer {
     this.phone = phone;
   }
 
-  public List<CartItem> getCartItems() {
-    return cartItems;
-  }
-
-  public void setCartItems(List<CartItem> cartItems) {
-    this.cartItems = cartItems;
-  }
 }

@@ -1,9 +1,9 @@
 package com.project.ecommerce.util;
 
-import com.project.ecommerce.exception.CategoryNotFoundException;
-import com.project.ecommerce.exception.CustomerNotFoundException;
-import com.project.ecommerce.exception.ProductNotFoundException;
-import com.project.ecommerce.model.ErrorDetails;
+import com.project.ecommerce.dto.ErrorDetails;
+import com.project.ecommerce.exception.*;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.persistence.EntityExistsException;
 import java.util.Date;
 
 @ControllerAdvice
@@ -35,6 +36,24 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
   @ExceptionHandler({CategoryNotFoundException.class})
   public void categoryNotFoundExceptionHandler() {
     System.out.print("Category not found Exception\n");
+  }
+
+  @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Inventory empty for product")
+  @ExceptionHandler({InventoryNotFoundException.class})
+  public void inventoryNotFoundExceptionHandler() {
+    System.out.print("Inventory not found Exception\n");
+  }
+
+  @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Cart empty for product")
+  @ExceptionHandler({CartNotFoundException.class})
+  public void cartNotFoundExceptionHandler() {
+    System.out.print("Cart not found Exception\n");
+  }
+
+  @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Inventory already mapped to cart")
+  @ExceptionHandler({DataIntegrityViolationException.class, ConstraintViolationException.class})
+  public void cartAlreadyMappedToInventory() {
+    System.out.print("Inventory already mapped to cart\n");
   }
 
   @Override
