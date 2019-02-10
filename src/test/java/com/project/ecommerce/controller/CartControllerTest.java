@@ -2,7 +2,9 @@ package com.project.ecommerce.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.ecommerce.EcommerceApplication;
+import com.project.ecommerce.dto.InCartProduct;
 import com.project.ecommerce.exception.InventoryNotFoundException;
+import com.project.ecommerce.model.Cart;
 import com.project.ecommerce.service.CartService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,11 +17,15 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.util.Arrays;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -58,6 +64,22 @@ public class CartControllerTest {
     mockMvc.perform(
         delete("/cart/2/product/2")
     ).andExpect(status().isNoContent());
+  }
+
+  @Test
+  public void shouldGetProductInCart() throws Exception {
+    Cart cart = mock(Cart.class);
+    InCartProduct inCartProduct1 = new InCartProduct(1, 2l, "product1", "description1");
+    InCartProduct inCartProduct2 = new InCartProduct(2, 4l, "product2", "description2");
+    when(cartService.getItemsInCart(anyInt())).thenReturn(Arrays.asList(inCartProduct1, inCartProduct2));
+    MvcResult result = mockMvc.perform(
+        get("/cart/2")
+    ).andExpect(status().isOk())
+        .andReturn();
+    assertFalse(result.getResponse().getContentAsString().isEmpty());
+    String content = result.getResponse().getContentAsString();
+    assertThat(content, is("[{\"productId\":1,\"count\":2,\"name\":\"product1\",\"description\":\"description1\"},{\"productId\":2,\"count\":4,\"name\":\"product2\",\"description\":\"description2\"}]"));
+
   }
 
 }

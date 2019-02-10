@@ -1,5 +1,6 @@
 package com.project.ecommerce.service;
 
+import com.project.ecommerce.dto.InCartProduct;
 import com.project.ecommerce.exception.InventoryNotFoundException;
 import com.project.ecommerce.model.Cart;
 import com.project.ecommerce.model.CartInventory;
@@ -55,5 +56,9 @@ public class CartInventoryService {
 
   public List<CartInventory> getAllProductInventoriesInCart(Integer cartId, Integer productId) {
     return cartInventoryRepository.findCartInventoriesByCart_IdAndInventory_ProductId(cartId, productId);
+  }
+
+  public List<InCartProduct> getProductDetailsInCart(Integer cartId) {
+    return cartInventoryRepository.findProductDetailsAndInventoryQuantityInCart(cartId);
   }
 }

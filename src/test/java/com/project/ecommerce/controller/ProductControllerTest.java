@@ -114,7 +114,6 @@ public class ProductControllerTest {
     ).andExpect(status().isOk())
         .andReturn();
     String content = result.getResponse().getContentAsString();
-    System.out.print(content);
     assertThat(content, is("[{\"id\":null,\"name\":\"product\",\"description\":\"description of product\",\"categories\":null,\"inventories\":null}]"));
   }
 

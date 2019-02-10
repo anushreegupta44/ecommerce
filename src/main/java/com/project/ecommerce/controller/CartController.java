@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static org.springframework.http.ResponseEntity.noContent;
 
 @RestController
@@ -31,5 +33,10 @@ public class CartController {
                                            @PathVariable("productId") Integer productId) throws InventoryNotFoundException {
     cartService.removeProductFromCart(cartId, productId);
     return noContent().build();
+  }
+
+  @GetMapping("/{cartId}")
+  public ResponseEntity<List> getItemsInCart(@PathVariable("cartId") Integer cartId) {
+    return new ResponseEntity(cartService.getItemsInCart(cartId), HttpStatus.OK);
   }
 }
