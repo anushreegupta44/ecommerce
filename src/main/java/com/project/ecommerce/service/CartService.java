@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CartService {
@@ -67,5 +68,16 @@ public class CartService {
       inventoryService.markInventoryWithStatus(cartInventory.getInventory(), InventoryStatus.SOLD);
     });
     return createdOrder;
+  }
+
+  public void deleteUserCart(Integer customerId) {
+    //find the cart that belongs to user
+    Optional<Cart> customerCart = cartRepository.findCartByCustomer_Id(customerId);
+    if (customerCart.isPresent()) {
+      //find all cartInventories for the customer and delete them
+      cartInventoryService.deleteCartInventoriesInCart(customerCart.get().getId());
+      //delete the cart finally
+      cartRepository.delete(customerCart.get());
+    }
   }
 }

@@ -1,5 +1,7 @@
 package com.project.ecommerce.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -14,6 +16,7 @@ public class Customer {
   private String phone;
   @OneToMany
   @JoinColumn(name = "customer_id")
+  @JsonIgnore
   private List<Order> orders;
 
   public Customer() {

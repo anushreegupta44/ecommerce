@@ -68,7 +68,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
   @Override
   protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                                                 HttpHeaders headers, HttpStatus status, WebRequest request) {
-    ErrorDetails errorDetails = new ErrorDetails(new Date(), ex.getMessage(),
+    ErrorDetails errorDetails = new ErrorDetails(new Date(), "Validation failure",
         ex.getMessage());
     return new ResponseEntity(errorDetails, HttpStatus.NOT_FOUND);
   }

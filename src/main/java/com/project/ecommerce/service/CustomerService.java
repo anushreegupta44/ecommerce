@@ -1,7 +1,6 @@
 package com.project.ecommerce.service;
 
 import com.project.ecommerce.exception.CustomerNotFoundException;
-import com.project.ecommerce.model.Cart;
 import com.project.ecommerce.model.Customer;
 import com.project.ecommerce.repository.CustomerRepository;
 import com.project.ecommerce.util.ValidationResponse;
@@ -34,6 +33,7 @@ public class CustomerService {
 
   public void remove(Integer customerId) throws CustomerNotFoundException {
     this.getCustomerDetails(customerId);
+    cartService.deleteUserCart(customerId);
     customerRepository.deleteById(customerId);
   }
 
