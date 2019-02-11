@@ -12,7 +12,6 @@ public class Inventory {
   private String sku;
 
   @ManyToOne
-  @JsonIgnore
   private Product product;
 
   @Enumerated(EnumType.STRING)

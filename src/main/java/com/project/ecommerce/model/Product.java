@@ -1,8 +1,9 @@
 package com.project.ecommerce.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
@@ -20,10 +21,12 @@ public class Product {
   @JoinTable(name = "product_category",
       joinColumns = {@JoinColumn(name = "product_id")},
       inverseJoinColumns = {@JoinColumn(name = "category_id")})
+  @NotNull
   private List<Category> categories;
 
   @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY)
   @JoinColumn(name = "product_id")
+  @JsonIgnore
   private List<Inventory> inventories;
 
   @NotNull
