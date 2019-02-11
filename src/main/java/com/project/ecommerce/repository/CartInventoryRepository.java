@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Repository
@@ -25,4 +26,9 @@ public interface CartInventoryRepository extends JpaRepository<CartInventory, Ca
       "WHERE  ci.cart.id=:cartId " +
       "GROUP BY i.product.id")
   List<InCartProduct> findProductDetailsAndInventoryQuantityInCart(@Param("cartId") Integer cartId);
+
+  List<CartInventory> findCartInventoriesByCart_Id(Integer cartId);
+
+  @Transactional
+  void deleteAllByCart_Id(Integer cartId);
 }

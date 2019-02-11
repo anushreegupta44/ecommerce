@@ -1,8 +1,10 @@
 package com.project.ecommerce.model;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
+@Table(name = "customers")
 public class Customer {
   @Id
   @GeneratedValue
@@ -10,6 +12,9 @@ public class Customer {
   private String name;
   private String address;
   private String phone;
+  @OneToMany
+  @JoinColumn(name = "customer_id")
+  private List<Order> orders;
 
   public Customer() {
   }
@@ -52,4 +57,11 @@ public class Customer {
     this.phone = phone;
   }
 
+  public List<Order> getOrders() {
+    return orders;
+  }
+
+  public void setOrders(List<Order> orders) {
+    this.orders = orders;
+  }
 }

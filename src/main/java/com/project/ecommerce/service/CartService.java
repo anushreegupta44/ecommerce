@@ -3,10 +3,7 @@ package com.project.ecommerce.service;
 import com.project.ecommerce.dto.InCartProduct;
 import com.project.ecommerce.exception.CartNotFoundException;
 import com.project.ecommerce.exception.InventoryNotFoundException;
-import com.project.ecommerce.model.Cart;
-import com.project.ecommerce.model.Customer;
-import com.project.ecommerce.model.Inventory;
-import com.project.ecommerce.model.InventoryStatus;
+import com.project.ecommerce.model.*;
 import com.project.ecommerce.repository.CartRepository;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +23,9 @@ public class CartService {
 
   @Autowired
   private CartInventoryService cartInventoryService;
+
+  @Autowired
+  private OrderService orderService;
 
   //kept as Transactional block since the inventory status should not be IN_CART unless it is actually mapped to a cart
   @Transactional
@@ -53,5 +53,19 @@ public class CartService {
   //gets every product and its quantity in a specific cart
   public List<InCartProduct> getItemsInCart(Integer cartId) {
     return cartInventoryService.getProductDetailsInCart(cartId);
+  }
+
+  @Transactional
+  public void checkoutCart(Integer cartId) {
+    //pull out all inventories from cart
+    List<CartInventory> inventoriesInCart = cartInventoryService.getAllInventoriesInCart(cartId);
+    //create an order and map inventory to order
+    orderService.createOrder(inventoriesInCart);
+    //delete all inventories from cart(cartInventory mapping)
+    cartInventoryService.deleteCartInventoriesInCart(cartId);
+    //mark inventories as SOLD
+    inventoriesInCart.forEach(cartInventory -> {
+      inventoryService.markInventoryWithStatus(cartInventory.getInventory(), InventoryStatus.SOLD);
+    });
   }
 }

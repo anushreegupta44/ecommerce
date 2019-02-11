@@ -61,4 +61,12 @@ public class CartInventoryService {
   public List<InCartProduct> getProductDetailsInCart(Integer cartId) {
     return cartInventoryRepository.findProductDetailsAndInventoryQuantityInCart(cartId);
   }
+
+  public List<CartInventory> getAllInventoriesInCart(Integer cartId) {
+    return cartInventoryRepository.findCartInventoriesByCart_Id(cartId);
+  }
+
+  public void deleteCartInventoriesInCart(Integer cartId) {
+    cartInventoryRepository.deleteAllByCart_Id(cartId);
+  }
 }

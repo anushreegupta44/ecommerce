@@ -5,6 +5,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
+@Table(name = "products")
 public class Product {
   @Id
   @GeneratedValue

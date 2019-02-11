@@ -39,4 +39,11 @@ public class CartController {
   public ResponseEntity<List> getItemsInCart(@PathVariable("cartId") Integer cartId) {
     return new ResponseEntity(cartService.getItemsInCart(cartId), HttpStatus.OK);
   }
+
+  @PostMapping("/{cartId}/checkout")
+  public ResponseEntity checkoutCart(@PathVariable("cartId") Integer cartId) {
+    cartService.checkoutCart(cartId);
+    return new ResponseEntity(HttpStatus.OK);
+  }
+
 }

@@ -4,23 +4,23 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "carts")
-public class Cart {
+@Table(name = "orders")
+public class Order {
   @Id
   @GeneratedValue
   private Integer id;
 
-  @OneToOne
+  @ManyToOne
   private Customer customer;
 
   @OneToMany
-  @JoinColumn(name = "CART_ID")
-  private List<CartInventory> inventories;
+  @JoinTable(name="order_inventory")
+  private List<Inventory> inventories;
 
-  public Cart() {
+  public Order() {
   }
 
-  public Cart(Customer customer, List<CartInventory> inventories) {
+  public Order(Customer customer, List<Inventory> inventories) {
     this.customer = customer;
     this.inventories = inventories;
   }
@@ -41,11 +41,11 @@ public class Cart {
     this.customer = customer;
   }
 
-  public List<CartInventory> getInventories() {
+  public List<Inventory> getInventories() {
     return inventories;
   }
 
-  public void setInventories(List<CartInventory> inventories) {
+  public void setInventories(List<Inventory> inventories) {
     this.inventories = inventories;
   }
 }
