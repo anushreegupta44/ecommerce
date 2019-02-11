@@ -1,5 +1,7 @@
 package com.project.ecommerce.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -11,18 +13,20 @@ public class Order {
   private Integer id;
 
   @ManyToOne
+  @JsonIgnore
   private Customer customer;
 
   @OneToMany
-  @JoinTable(name="order_inventory")
-  private List<Inventory> inventories;
+  @JoinColumn(name = "ORDER_ID")
+  @JsonIgnore
+  private List<OrderInventory> orderInventories;
 
   public Order() {
   }
 
-  public Order(Customer customer, List<Inventory> inventories) {
+  public Order(Customer customer, List<OrderInventory> orderInventories) {
     this.customer = customer;
-    this.inventories = inventories;
+    this.orderInventories = orderInventories;
   }
 
   public Integer getId() {
@@ -41,11 +45,11 @@ public class Order {
     this.customer = customer;
   }
 
-  public List<Inventory> getInventories() {
-    return inventories;
+  public List<OrderInventory> getOrderInventories() {
+    return orderInventories;
   }
 
-  public void setInventories(List<Inventory> inventories) {
-    this.inventories = inventories;
+  public void setOrderInventories(List<OrderInventory> orderInventories) {
+    this.orderInventories = orderInventories;
   }
 }

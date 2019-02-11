@@ -1,6 +1,7 @@
 package com.project.ecommerce.service;
 
 import com.project.ecommerce.dto.InCartProduct;
+import com.project.ecommerce.exception.InventoryAlreadyInCartException;
 import com.project.ecommerce.exception.InventoryNotFoundException;
 import com.project.ecommerce.model.Cart;
 import com.project.ecommerce.model.CartInventory;
@@ -24,9 +25,13 @@ public class CartInventoryService {
   private InventoryService inventoryService;
 
   //mapping cart to inventory since an inventory can be in many carts till its status is not SOLD, hence kept the mapping for cart and inventory as manytomany
-  public void mapCartToInventory(Cart cart, Inventory availableInventory) throws DataIntegrityViolationException, ConstraintViolationException {
+  public void mapCartToInventory(Cart cart, Inventory availableInventory) throws InventoryAlreadyInCartException {
     CartInventory cartInventory = new CartInventory(cart, availableInventory);
-    cartInventoryRepository.save(cartInventory);
+    try {
+      cartInventoryRepository.save(cartInventory);
+    } catch (DataIntegrityViolationException | ConstraintViolationException e) {
+      throw new InventoryAlreadyInCartException();
+    }
   }
 
   //deleting an product from the cart would mean deleting the mapping of the cart to pne of the product's inventory currently inCart

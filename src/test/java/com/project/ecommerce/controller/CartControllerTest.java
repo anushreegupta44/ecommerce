@@ -5,6 +5,9 @@ import com.project.ecommerce.EcommerceApplication;
 import com.project.ecommerce.dto.InCartProduct;
 import com.project.ecommerce.exception.InventoryNotFoundException;
 import com.project.ecommerce.model.Cart;
+import com.project.ecommerce.model.Customer;
+import com.project.ecommerce.model.Order;
+import com.project.ecommerce.model.OrderInventory;
 import com.project.ecommerce.service.CartService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,6 +25,7 @@ import java.util.Arrays;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -80,6 +84,21 @@ public class CartControllerTest {
     String content = result.getResponse().getContentAsString();
     assertThat(content, is("[{\"productId\":1,\"count\":2,\"name\":\"product1\",\"description\":\"description1\"},{\"productId\":2,\"count\":4,\"name\":\"product2\",\"description\":\"description2\"}]"));
 
+  }
+
+  @Test
+  public void shouldCheckoutCart() throws Exception {
+    Cart cart = mock(Cart.class);
+    Order order = new Order();
+    order.setOrderInventories(Arrays.asList(new OrderInventory()));
+    order.setCustomer(new Customer("customer", "address", "phone"));
+    when(cartService.checkoutCart(anyInt())).thenReturn(order);
+    MvcResult result = mockMvc.perform(
+        post("/cart/2/checkout")
+    ).andExpect(status().isOk()).andReturn();
+    String content = result.getResponse().getContentAsString();
+    assertTrue(content.contains("id"));
+    assertFalse(content.contains("customer"));
   }
 
 }

@@ -1,8 +1,10 @@
 package com.project.ecommerce.service;
 
+import com.project.ecommerce.exception.InventoryAlreadyInCartException;
 import com.project.ecommerce.exception.InventoryNotFoundException;
 import com.project.ecommerce.model.*;
 import com.project.ecommerce.repository.CartInventoryRepository;
+import org.hibernate.exception.ConstraintViolationException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -27,10 +29,20 @@ public class CartInventoryServiceTest {
   private InventoryService inventoryService;
 
   @Test
-  public void shouldSaveCartInventory() {
+  public void shouldSaveCartInventory() throws InventoryAlreadyInCartException {
     Cart cart = mock(Cart.class);
     Inventory inventory = mock(Inventory.class);
     CartInventory cartInventory = new CartInventory(cart, inventory);
+    cartInventoryService.mapCartToInventory(cart, inventory);
+    verify(cartInventoryRepository).save(cartInventory);
+  }
+
+  @Test(expected = InventoryAlreadyInCartException.class)
+  public void shouldThrowErrIfInventoryExistsForCart() throws InventoryAlreadyInCartException {
+    Cart cart = mock(Cart.class);
+    Inventory inventory = mock(Inventory.class);
+    CartInventory cartInventory = new CartInventory(cart, inventory);
+    when(cartInventoryRepository.save(any(CartInventory.class))).thenThrow(ConstraintViolationException.class);
     cartInventoryService.mapCartToInventory(cart, inventory);
     verify(cartInventoryRepository).save(cartInventory);
   }

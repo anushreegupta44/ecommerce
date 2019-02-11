@@ -1,11 +1,9 @@
 package com.project.ecommerce.controller;
 
-import com.project.ecommerce.exception.CartNotFoundException;
-import com.project.ecommerce.exception.InventoryNotFoundException;
+import com.project.ecommerce.exception.*;
+import com.project.ecommerce.model.Order;
 import com.project.ecommerce.service.CartService;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +21,8 @@ public class CartController {
 
   @PostMapping("/{cartId}/product/{productId}")
   public ResponseEntity addItemToCart(@PathVariable("cartId") Integer cartId,
-                                      @PathVariable("productId") Integer productId) throws InventoryNotFoundException, CartNotFoundException, DataIntegrityViolationException, ConstraintViolationException {
+                                      @PathVariable("productId") Integer productId)
+      throws InventoryNotFoundException, CartNotFoundException, InventoryAlreadyInCartException {
     cartService.addProductToCart(cartId, productId);
     return new ResponseEntity(HttpStatus.OK);
   }
@@ -40,10 +39,10 @@ public class CartController {
     return new ResponseEntity(cartService.getItemsInCart(cartId), HttpStatus.OK);
   }
 
+  //Returns the id of the created order
   @PostMapping("/{cartId}/checkout")
-  public ResponseEntity checkoutCart(@PathVariable("cartId") Integer cartId) {
-    cartService.checkoutCart(cartId);
-    return new ResponseEntity(HttpStatus.OK);
+  public ResponseEntity<Order> checkoutCart(@PathVariable("cartId") Integer cartId) throws CartEmptyException, CustomerNotFoundException {
+    return new ResponseEntity(cartService.checkoutCart(cartId), HttpStatus.OK);
   }
 
 }

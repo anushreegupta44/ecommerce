@@ -1,13 +1,10 @@
 package com.project.ecommerce.service;
 
 import com.project.ecommerce.dto.InCartProduct;
-import com.project.ecommerce.exception.CartNotFoundException;
-import com.project.ecommerce.exception.InventoryNotFoundException;
+import com.project.ecommerce.exception.*;
 import com.project.ecommerce.model.*;
 import com.project.ecommerce.repository.CartRepository;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -29,7 +26,7 @@ public class CartService {
 
   //kept as Transactional block since the inventory status should not be IN_CART unless it is actually mapped to a cart
   @Transactional
-  public void addProductToCart(Integer cartId, Integer productId) throws InventoryNotFoundException, CartNotFoundException, DataIntegrityViolationException, ConstraintViolationException {
+  public void addProductToCart(Integer cartId, Integer productId) throws InventoryNotFoundException, CartNotFoundException, InventoryAlreadyInCartException {
     Inventory availableInventory = inventoryService.getInventoryToAdd(productId);
     Cart cart = this.getCartById(cartId);
     cartInventoryService.mapCartToInventory(cart, availableInventory);
@@ -55,17 +52,20 @@ public class CartService {
     return cartInventoryService.getProductDetailsInCart(cartId);
   }
 
-  @Transactional
-  public void checkoutCart(Integer cartId) {
+  public Order checkoutCart(Integer cartId) throws CartEmptyException, CustomerNotFoundException {
     //pull out all inventories from cart
     List<CartInventory> inventoriesInCart = cartInventoryService.getAllInventoriesInCart(cartId);
+    if (inventoriesInCart == null || inventoriesInCart.size() == 0) {
+      throw new CartEmptyException();
+    }
     //create an order and map inventory to order
-    orderService.createOrder(inventoriesInCart);
+    Order createdOrder = orderService.createOrder(inventoriesInCart);
     //delete all inventories from cart(cartInventory mapping)
     cartInventoryService.deleteCartInventoriesInCart(cartId);
     //mark inventories as SOLD
     inventoriesInCart.forEach(cartInventory -> {
       inventoryService.markInventoryWithStatus(cartInventory.getInventory(), InventoryStatus.SOLD);
     });
+    return createdOrder;
   }
 }
