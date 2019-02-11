@@ -59,6 +59,12 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     System.out.print("Cart has no products\n");
   }
 
+  @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Order does not exist or has no items")
+  @ExceptionHandler({OrderNotFoundException.class})
+  public void orderNotFoundException() {
+    System.out.print("Order does not exist or has no items\n");
+  }
+
   @Override
   protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                                                 HttpHeaders headers, HttpStatus status, WebRequest request) {

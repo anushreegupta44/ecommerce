@@ -1,6 +1,9 @@
 package com.project.ecommerce.service;
 
+import com.project.ecommerce.dto.OrderDetail;
+import com.project.ecommerce.dto.OrderDetails;
 import com.project.ecommerce.exception.CustomerNotFoundException;
+import com.project.ecommerce.exception.OrderNotFoundException;
 import com.project.ecommerce.model.CartInventory;
 import com.project.ecommerce.model.Order;
 import com.project.ecommerce.repository.OrderRepository;
@@ -8,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static java.util.Objects.isNull;
 
 @Service
 public class OrderService {
@@ -29,5 +34,20 @@ public class OrderService {
     //save all pulled out cart inventories to order
     orderInventoryService.saveListOfOrderInventories(order, inventoriesInCart);
     return order;
+  }
+
+  public OrderDetails getOrderDetails(Integer orderId) throws OrderNotFoundException {
+    List<OrderDetail> orderDetails = orderRepository.findOrderDetails(orderId);
+    if (isNull(orderDetails) || orderDetails.size() == 0) {
+      throw new OrderNotFoundException();
+    }
+    Long totalPrice = Long.valueOf(0);
+    for (OrderDetail od :
+        orderDetails) {
+      totalPrice += od.getPricePerUnit() * od.getCount();
+    }
+    //assuming total taxes are always 12% of total price
+    Double totalTaxes = Double.valueOf(Math.multiplyExact((long) 0.12, totalPrice));
+    return new OrderDetails(orderDetails, totalTaxes, totalPrice);
   }
 }

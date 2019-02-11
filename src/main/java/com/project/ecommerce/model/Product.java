@@ -2,6 +2,7 @@ package com.project.ecommerce.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
@@ -24,6 +25,9 @@ public class Product {
   @OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY)
   @JoinColumn(name = "product_id")
   private List<Inventory> inventories;
+
+  @NotNull
+  private Long pricePerUnit;
 
   public Product() {
   }
@@ -73,5 +77,13 @@ public class Product {
 
   public void setInventories(List<Inventory> inventories) {
     this.inventories = inventories;
+  }
+
+  public Long getPricePerUnit() {
+    return pricePerUnit;
+  }
+
+  public void setPricePerUnit(Long pricePerUnit) {
+    this.pricePerUnit = pricePerUnit;
   }
 }

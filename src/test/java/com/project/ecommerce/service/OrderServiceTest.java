@@ -1,6 +1,9 @@
 package com.project.ecommerce.service;
 
+import com.project.ecommerce.dto.OrderDetail;
+import com.project.ecommerce.dto.OrderDetails;
 import com.project.ecommerce.exception.CustomerNotFoundException;
+import com.project.ecommerce.exception.OrderNotFoundException;
 import com.project.ecommerce.model.Cart;
 import com.project.ecommerce.model.CartInventory;
 import com.project.ecommerce.model.Customer;
@@ -14,8 +17,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Arrays;
 
+import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -47,6 +52,21 @@ public class OrderServiceTest {
     when(orderRepository.save(any())).thenReturn(order);
     Order returnedOrder = orderService.createOrder(Arrays.asList(cartInventory1, cartInventory2));
     assertNotNull(returnedOrder);
+  }
+
+  @Test
+  public void shouldCreateOrderDetails() throws OrderNotFoundException {
+    OrderDetail orderDetail1 = new OrderDetail(1, "product1", "product1description", 2l, 2l);
+    OrderDetail orderDetail2 = new OrderDetail(2, "product1", "product1description", 2l, 4l);
+    when(orderRepository.findOrderDetails(anyInt())).thenReturn(Arrays.asList(orderDetail1, orderDetail2));
+    OrderDetails orderDetails = orderService.getOrderDetails(2);
+    assertEquals((Long) orderDetails.getTotalPrice(), (Long) 12l);
+  }
+
+  @Test(expected = OrderNotFoundException.class)
+  public void shouldThrowExpIfNoOrderDetailExists() throws OrderNotFoundException {
+    when(orderRepository.findOrderDetails(anyInt())).thenReturn(Arrays.asList());
+    OrderDetails orderDetails = orderService.getOrderDetails(2);
   }
 
 }
