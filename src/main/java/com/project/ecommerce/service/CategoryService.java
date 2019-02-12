@@ -2,9 +2,7 @@ package com.project.ecommerce.service;
 
 import com.project.ecommerce.dto.CategoryDto;
 import com.project.ecommerce.exception.CategoryNotFoundException;
-import com.project.ecommerce.exception.ProductNotFoundException;
 import com.project.ecommerce.model.Category;
-import com.project.ecommerce.model.Product;
 import com.project.ecommerce.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,4 +42,7 @@ public class CategoryService {
     return categoryRepository.getCategoryByName(name).orElseThrow(() -> new CategoryNotFoundException());
   }
 
+  public Category createCategory(Category category) {
+    return categoryRepository.save(category);
+  }
 }
