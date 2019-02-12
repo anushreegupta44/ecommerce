@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.Objects;
 
 @Entity
-@Table(name = "cart_inventory")
+@Table(name = "Cart_Inventory")
 //have a third table to hold the many to many mapping of cart and inventory
 public class CartInventory {
   @EmbeddedId

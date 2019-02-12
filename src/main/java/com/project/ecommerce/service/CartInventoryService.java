@@ -34,7 +34,7 @@ public class CartInventoryService {
     }
   }
 
-  //deleting an product from the cart would mean deleting the mapping of the cart to pne of the product's inventory currently inCart
+  //deleting an product from the cart would mean deleting the mapping of the cart to one of the product's inventory currently inCart
   //also would need to mark the inventory back to AVAILABLE if it is not in any cart
   @Transactional
   public void deleteCartInventory(Integer cartId, Integer productId) throws InventoryNotFoundException {

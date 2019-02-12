@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
-@Table(name = "products")
+@Table(name = "Products")
 public class Product {
   @Id
   @GeneratedValue
@@ -18,7 +18,7 @@ public class Product {
   private String description;
 
   @ManyToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY)
-  @JoinTable(name = "product_category",
+  @JoinTable(name = "Product_Category",
       joinColumns = {@JoinColumn(name = "product_id")},
       inverseJoinColumns = {@JoinColumn(name = "category_id")})
   @NotNull
