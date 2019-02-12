@@ -19,6 +19,7 @@ public class Inventory {
 
   @OneToMany
   @JoinColumn(name = "INVENTORY_SKU")
+  @JsonIgnore
   private List<CartInventory> carts;
 
   public Inventory() {

@@ -1,6 +1,7 @@
 package com.project.ecommerce.service;
 
 import com.project.ecommerce.exception.InventoryNotFoundException;
+import com.project.ecommerce.exception.ProductNotFoundException;
 import com.project.ecommerce.model.Inventory;
 import com.project.ecommerce.model.InventoryStatus;
 import com.project.ecommerce.model.Product;
@@ -28,6 +29,9 @@ public class InventoryServiceTest {
 
   @InjectMocks
   private InventoryService inventoryService;
+
+  @Mock
+  private ProductService productService;
 
   @Test
   public void giveValidResIfInventoryForProductExists() {
@@ -80,5 +84,19 @@ public class InventoryServiceTest {
     inventoryService.markInventoryWithStatus(inventory, InventoryStatus.IN_CART);
     verify(inventoryRepository).save(inventory);
     verify(inventory).setStatus(InventoryStatus.IN_CART);
+  }
+
+  @Test(expected = ProductNotFoundException.class)
+  public void throwExceptionIfProductNotFound() throws ProductNotFoundException {
+    when(productService.getProductById(anyInt())).thenThrow(new ProductNotFoundException());
+    inventoryService.addInventoryForProduct("ID-21346", 2);
+  }
+
+  @Test
+  public void shouldSaveInventory() throws ProductNotFoundException {
+    Product product = mock(Product.class);
+    when(productService.getProductById(anyInt())).thenReturn(product);
+    inventoryService.addInventoryForProduct("ID-21346", 2);
+    verify(inventoryRepository).save(any(Inventory.class));
   }
 }

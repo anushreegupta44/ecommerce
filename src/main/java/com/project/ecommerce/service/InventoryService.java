@@ -1,8 +1,10 @@
 package com.project.ecommerce.service;
 
 import com.project.ecommerce.exception.InventoryNotFoundException;
+import com.project.ecommerce.exception.ProductNotFoundException;
 import com.project.ecommerce.model.Inventory;
 import com.project.ecommerce.model.InventoryStatus;
+import com.project.ecommerce.model.Product;
 import com.project.ecommerce.repository.InventoryRepository;
 import com.project.ecommerce.util.ValidationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,9 @@ public class InventoryService {
 
   @Autowired
   private InventoryRepository inventoryRepository;
+
+  @Autowired
+  private ProductService productService;
 
   public ValidationResponse validateInventoryForProductExists(Integer productId) {
     List<Inventory> inventoryAvailableForSale = inventoryRepository.findInventoriesByProduct_IdAndStatus(productId, InventoryStatus.AVAILABLE);
@@ -48,5 +53,11 @@ public class InventoryService {
     inventory.setStatus(status);
     Inventory savedInventory = inventoryRepository.save(inventory);
     return savedInventory;
+  }
+
+  public Inventory addInventoryForProduct(String inventorySku, Integer productId) throws ProductNotFoundException {
+    Product product = productService.getProductById(productId);
+    Inventory inventory = new Inventory(inventorySku, product, InventoryStatus.AVAILABLE, null);
+    return inventoryRepository.save(inventory);
   }
 }

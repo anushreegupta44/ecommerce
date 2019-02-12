@@ -34,15 +34,6 @@ public class ProductService {
     return productRepository.save(productToAdd);
   }
 
-  public ValidationResponse validateProductWithIdExists(Integer productId) {
-    Optional<Product> product = productRepository.findById(productId);
-    if (!product.isPresent()) {
-      return new ValidationResponse(false, new HashMap<String, String>() {{
-        put("product", "product.does.not.exist");
-      }});
-    } else return new ValidationResponse(true, null);
-  }
-
   public void remove(Integer productId) throws ProductNotFoundException {
     this.getProductById(productId);
     productRepository.deleteById(productId);
