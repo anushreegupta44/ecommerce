@@ -22,7 +22,7 @@ public class Category {
 
   @ManyToMany(mappedBy = "categories")
   @JsonIgnore
-  private List<Product> products = new ArrayList<>();
+  private List<Product> products;
 
   public Category() {
   }

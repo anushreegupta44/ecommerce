@@ -2,6 +2,7 @@ package com.project.ecommerce.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.ecommerce.EcommerceApplication;
+import com.project.ecommerce.exception.CategoryNotFoundException;
 import com.project.ecommerce.model.Category;
 import com.project.ecommerce.service.CategoryService;
 import org.junit.Test;
@@ -13,9 +14,15 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -44,6 +51,40 @@ public class CategoryControllerTest {
             .content(incomingCategoryJson)
             .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
     ).andExpect(status().isOk());
+
+  }
+
+  @Test
+  public void shouldUpdateCategory() throws Exception {
+    Category category = new Category();
+    category.setName("cat1");
+    category.setDescription("category 1 description");
+    String incomingCategoryJson = objectMapper.writeValueAsString(category);
+
+    when(categoryService.updateCategory(anyInt(), any(Category.class))).thenReturn(category);
+    mockMvc.perform(
+        put("/categories/1")
+            .content(incomingCategoryJson)
+            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+    ).andExpect(status().isOk());
+  }
+
+  @Test
+  public void shouldThrowErrorIfCategoryDoesNotExist() throws Exception {
+    Category category = new Category();
+    category.setName("cat1");
+    category.setDescription("category 1 description");
+    String incomingCategoryJson = objectMapper.writeValueAsString(category);
+
+    when(categoryService.updateCategory(anyInt(), any(Category.class))).thenThrow(CategoryNotFoundException.class);
+    MvcResult result = mockMvc.perform(
+        put("/categories/1")
+            .content(incomingCategoryJson)
+            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+    ).andExpect(status().isNotFound()).andReturn();
+    String errorMessage = result.getResponse().getErrorMessage();
+    assertThat(errorMessage, is("Category not found"));
+
 
   }
 }

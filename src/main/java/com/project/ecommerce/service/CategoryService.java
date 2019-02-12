@@ -45,4 +45,15 @@ public class CategoryService {
   public Category createCategory(Category category) {
     return categoryRepository.save(category);
   }
+
+  public Category updateCategory(Integer categoryId, Category category) throws CategoryNotFoundException {
+    Category categoryToUpdate = this.getCategoryById(categoryId);
+    categoryToUpdate.setName(category.getName());
+    categoryToUpdate.setDescription(category.getDescription());
+    return categoryRepository.save(categoryToUpdate);
+  }
+
+  public Category getCategoryById(Integer categoryId) throws CategoryNotFoundException {
+    return categoryRepository.findById(categoryId).orElseThrow(() -> new CategoryNotFoundException());
+  }
 }
