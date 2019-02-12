@@ -3,7 +3,7 @@ package com.project.ecommerce.model;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "Order_Inventory",
+@Table(name = "order_inventory",
     uniqueConstraints = {@UniqueConstraint(columnNames = {"INVENTORY_SKU"})})
 //have a third table to hold the one to many mapping of order and inventory
 //Not using the build in functionality to map a list of inventories to order because have to handle the failure scenario for an inventory already checked out in another order

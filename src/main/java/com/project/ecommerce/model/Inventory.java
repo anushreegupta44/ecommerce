@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "Inventories")
+@Table(name = "inventories")
 public class Inventory {
   @Id
   private String sku;
