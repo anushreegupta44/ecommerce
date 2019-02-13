@@ -20,9 +20,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -51,7 +51,6 @@ public class CategoryControllerTest {
             .content(incomingCategoryJson)
             .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
     ).andExpect(status().isOk());
-
   }
 
   @Test
@@ -84,7 +83,23 @@ public class CategoryControllerTest {
     ).andExpect(status().isNotFound()).andReturn();
     String errorMessage = result.getResponse().getErrorMessage();
     assertThat(errorMessage, is("Category not found"));
+  }
 
+  @Test
+  public void shouldDeleteCategory() throws Exception {
+    mockMvc.perform(
+        delete("/categories/1")
+    ).andExpect(status().isNoContent());
+  }
+
+  @Test
+  public void shouldNotDeleteCategoryIfCategoryNotFound() throws Exception {
+    doThrow(new CategoryNotFoundException()).when(categoryService).remove(anyInt());
+    MvcResult result = mockMvc.perform(
+        delete("/categories/1")
+    ).andExpect(status().isNotFound()).andReturn();
+    String errorMessage = result.getResponse().getErrorMessage();
+    assertThat(errorMessage, is("Category not found"));
 
   }
 }

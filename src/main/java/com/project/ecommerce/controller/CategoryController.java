@@ -1,6 +1,7 @@
 package com.project.ecommerce.controller;
 
 import com.project.ecommerce.exception.CategoryNotFoundException;
+import com.project.ecommerce.exception.ProductNotFoundException;
 import com.project.ecommerce.model.Category;
 import com.project.ecommerce.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
+import static org.springframework.http.ResponseEntity.noContent;
 
 @RestController
 public class CategoryController {
@@ -26,5 +29,9 @@ public class CategoryController {
     return new ResponseEntity(categoryService.updateCategory(categoryId, category), HttpStatus.OK);
   }
 
-
+  @DeleteMapping("/categories/{id}")
+  public ResponseEntity deleteProduct(@PathVariable("id") Integer categoryId) throws CategoryNotFoundException {
+    categoryService.remove(categoryId);
+    return noContent().build();
+  }
 }
