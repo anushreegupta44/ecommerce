@@ -51,7 +51,12 @@ public class OrderService {
     return new OrderDetails(orderDetails, totalTaxes, totalPrice);
   }
 
-  public void addOrderDetails(Order createdOrder) {
-    orderRepository.save(createdOrder);
+  public Order editOrderDetails(Order createdOrder) throws OrderNotFoundException {
+    //get total price and total taxes for order
+    OrderDetails orderDetails = getOrderDetails(createdOrder.getId());
+    createdOrder.setTotalPrice(orderDetails.getTotalPrice());
+    createdOrder.setTotalTaxes(orderDetails.getTotalTaxes());
+    //save order entity
+    return orderRepository.save(createdOrder);
   }
 }

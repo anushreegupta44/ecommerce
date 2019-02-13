@@ -104,6 +104,6 @@ public class CartServiceTest {
     cartService.checkoutCart(2);
 
     verify(inventoryService, times(2)).markInventoryWithStatus(cartInventory1.getInventory(), InventoryStatus.SOLD);
-    verify(orderService).addOrderDetails(order);
+    verify(orderService).editOrderDetails(order);
   }
 }

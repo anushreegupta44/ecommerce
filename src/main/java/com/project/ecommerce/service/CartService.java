@@ -1,7 +1,6 @@
 package com.project.ecommerce.service;
 
 import com.project.ecommerce.dto.InCartProduct;
-import com.project.ecommerce.dto.OrderDetails;
 import com.project.ecommerce.exception.*;
 import com.project.ecommerce.model.*;
 import com.project.ecommerce.repository.CartRepository;
@@ -68,13 +67,7 @@ public class CartService {
     inventoriesInCart.forEach(cartInventory -> {
       inventoryService.markInventoryWithStatus(cartInventory.getInventory(), InventoryStatus.SOLD);
     });
-    //get total price and total taxes for order
-    OrderDetails orderDetails = orderService.getOrderDetails(createdOrder.getId());
-    createdOrder.setTotalPrice(orderDetails.getTotalPrice());
-    createdOrder.setTotalTaxes(orderDetails.getTotalTaxes());
-    //save order entity
-    orderService.addOrderDetails(createdOrder);
-    return createdOrder;
+    return orderService.editOrderDetails(createdOrder);
   }
 
   public void deleteUserCart(Integer customerId) {
