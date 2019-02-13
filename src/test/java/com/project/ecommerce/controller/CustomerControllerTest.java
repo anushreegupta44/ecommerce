@@ -40,13 +40,12 @@ public class CustomerControllerTest {
 
   @Test
   public void shouldGetCustomer() throws Exception {
-    Customer customer = new Customer("customer", "address", "987654321");
+    Customer customer = new Customer("customer", "987654321", null, null);
     when(customerService.getCustomerDetails(1)).thenReturn(customer);
     mockMvc.perform(
         get("/customers/1")
     ).andExpect(status().isOk())
         .andExpect(jsonPath("$.name", is("customer")))
-        .andExpect(jsonPath("$.address", is("address")))
         .andExpect(jsonPath("$.phone", is("987654321")));
   }
 
@@ -63,7 +62,7 @@ public class CustomerControllerTest {
 
   @Test
   public void shouldCreateCustomer() throws Exception {
-    Customer incomingCustomer = new Customer("name", "address", "9899999999");
+    Customer incomingCustomer = new Customer("name", "9899999999", null, null);
     String incomingCustomerJson = objectMapper.writeValueAsString(incomingCustomer);
     when(customerService.createCustomerDetails(incomingCustomer)).thenReturn(incomingCustomer);
     mockMvc.perform(

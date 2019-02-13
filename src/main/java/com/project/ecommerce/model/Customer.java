@@ -3,6 +3,7 @@ package com.project.ecommerce.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
@@ -11,21 +12,31 @@ public class Customer {
   @Id
   @GeneratedValue
   private Integer id;
+
+  @NotNull
   private String name;
-  private String address;
+
+  @NotNull
   private String phone;
+
   @OneToMany
   @JoinColumn(name = "customer_id")
   @JsonIgnore
   private List<Order> orders;
 
+  @OneToMany(cascade = CascadeType.ALL)
+  @JoinColumn(name = "customer_id")
+  @NotNull
+  private List<Address> addresses;
+
   public Customer() {
   }
 
-  public Customer(String name, String address, String phone) {
+  public Customer(String name, String phone, List<Order> orders, List<Address> addresses) {
     this.name = name;
-    this.address = address;
     this.phone = phone;
+    this.orders = orders;
+    this.addresses = addresses;
   }
 
   public Integer getId() {
@@ -44,14 +55,6 @@ public class Customer {
     this.name = name;
   }
 
-  public String getAddress() {
-    return address;
-  }
-
-  public void setAddress(String address) {
-    this.address = address;
-  }
-
   public String getPhone() {
     return phone;
   }
@@ -66,5 +69,13 @@ public class Customer {
 
   public void setOrders(List<Order> orders) {
     this.orders = orders;
+  }
+
+  public List<Address> getAddresses() {
+    return addresses;
+  }
+
+  public void setAddresses(List<Address> addresses) {
+    this.addresses = addresses;
   }
 }

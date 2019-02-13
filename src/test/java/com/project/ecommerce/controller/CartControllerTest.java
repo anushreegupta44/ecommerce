@@ -91,7 +91,7 @@ public class CartControllerTest {
     Cart cart = mock(Cart.class);
     Order order = new Order();
     order.setOrderInventories(Arrays.asList(new OrderInventory()));
-    order.setCustomer(new Customer("customer", "address", "phone"));
+    order.setCustomer(new Customer("customer", "phone", null, null));
     when(cartService.checkoutCart(anyInt())).thenReturn(order);
     MvcResult result = mockMvc.perform(
         post("/cart/2/checkout")
