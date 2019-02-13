@@ -12,14 +12,14 @@ public class Address {
   private String address;
 
   @Enumerated(EnumType.STRING)
-  private AddressType addressType;
+  private AddressType type;
 
   public Address() {
   }
 
-  public Address(String address, AddressType addressType) {
+  public Address(String address, AddressType type) {
     this.address = address;
-    this.addressType = addressType;
+    this.type = type;
   }
 
   public Integer getId() {
@@ -38,12 +38,12 @@ public class Address {
     this.address = address;
   }
 
-  public AddressType getAddressType() {
-    return addressType;
+  public AddressType getType() {
+    return type;
   }
 
-  public void setAddressType(AddressType addressType) {
-    this.addressType = addressType;
+  public void setType(AddressType type) {
+    this.type = type;
   }
 
 }

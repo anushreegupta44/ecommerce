@@ -41,7 +41,7 @@ public class CartController {
 
   //Returns the id of the created order
   @PostMapping("/{cartId}/checkout")
-  public ResponseEntity<Order> checkoutCart(@PathVariable("cartId") Integer cartId) throws CartEmptyException, CustomerNotFoundException {
+  public ResponseEntity<Order> checkoutCart(@PathVariable("cartId") Integer cartId) throws CartEmptyException, CustomerNotFoundException, OrderNotFoundException {
     return new ResponseEntity(cartService.checkoutCart(cartId), HttpStatus.OK);
   }
 

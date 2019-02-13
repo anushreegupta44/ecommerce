@@ -47,7 +47,11 @@ public class OrderService {
       totalPrice += od.getPricePerUnit() * od.getCount();
     }
     //assuming total taxes are always 12% of total price
-    Double totalTaxes = Double.valueOf(Math.multiplyExact((long) 0.12, totalPrice));
+    Long totalTaxes = Math.multiplyExact((long) 0.12, totalPrice);
     return new OrderDetails(orderDetails, totalTaxes, totalPrice);
+  }
+
+  public void addOrderDetails(Order createdOrder) {
+    orderRepository.save(createdOrder);
   }
 }

@@ -1,6 +1,7 @@
 package com.project.ecommerce.service;
 
 import com.project.ecommerce.dto.InCartProduct;
+import com.project.ecommerce.dto.OrderDetails;
 import com.project.ecommerce.exception.*;
 import com.project.ecommerce.model.*;
 import com.project.ecommerce.repository.CartRepository;
@@ -53,7 +54,7 @@ public class CartService {
     return cartInventoryService.getProductDetailsInCart(cartId);
   }
 
-  public Order checkoutCart(Integer cartId) throws CartEmptyException, CustomerNotFoundException {
+  public Order checkoutCart(Integer cartId) throws CartEmptyException, CustomerNotFoundException, OrderNotFoundException {
     //pull out all inventories from cart
     List<CartInventory> inventoriesInCart = cartInventoryService.getAllInventoriesInCart(cartId);
     if (inventoriesInCart == null || inventoriesInCart.size() == 0) {
@@ -67,6 +68,10 @@ public class CartService {
     inventoriesInCart.forEach(cartInventory -> {
       inventoryService.markInventoryWithStatus(cartInventory.getInventory(), InventoryStatus.SOLD);
     });
+    OrderDetails orderDetails = orderService.getOrderDetails(createdOrder.getId());
+    createdOrder.setTotalPrice(orderDetails.getTotalPrice());
+    createdOrder.setTotalTaxes(orderDetails.getTotalTaxes());
+    orderService.addOrderDetails(createdOrder);
     return createdOrder;
   }
 

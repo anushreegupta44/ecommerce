@@ -1,8 +1,8 @@
 package com.project.ecommerce.service;
 
+import com.project.ecommerce.dto.OrderDetails;
 import com.project.ecommerce.exception.*;
 import com.project.ecommerce.model.*;
-import com.project.ecommerce.repository.CategoryRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -19,9 +19,6 @@ import static org.mockito.Mockito.*;
 public class CartServiceTest {
   @InjectMocks
   private CartService cartService;
-
-  @Mock
-  private CategoryRepository categoryRepository;
 
   @Mock
   private InventoryService inventoryService;
@@ -83,23 +80,30 @@ public class CartServiceTest {
   }
 
   @Test(expected = CartEmptyException.class)
-  public void shouldThrowErrIfCartEmptyOnCheckout() throws CustomerNotFoundException, CartEmptyException {
+  public void shouldThrowErrIfCartEmptyOnCheckout() throws CustomerNotFoundException, CartEmptyException, OrderNotFoundException {
     when(cartInventoryService.getAllInventoriesInCart(anyInt())).thenReturn(Arrays.asList());
     cartService.checkoutCart(2);
   }
 
   @Test
-  public void shouldMarkBothInventoriesAsSold() throws CustomerNotFoundException, CartEmptyException {
+  public void shouldMarkBothInventoriesAsSold() throws CustomerNotFoundException, CartEmptyException, OrderNotFoundException {
     Inventory inventory = new Inventory();
     Cart cart = new Cart();
+    Order order = new Order();
+    order.setId(1);
+    OrderDetails orderDetails = new OrderDetails(null, 9l, 9l);
     CartInventory cartInventory1 = new CartInventory(cart, inventory);
     cartInventory1.getInventory().setStatus(InventoryStatus.IN_CART);
     CartInventory cartInventory2 = new CartInventory(cart, inventory);
     cartInventory2.getInventory().setStatus(InventoryStatus.IN_CART);
+
     when(cartInventoryService.getAllInventoriesInCart(anyInt())).thenReturn(Arrays.asList(cartInventory1, cartInventory2));
+    when(orderService.createOrder(anyList())).thenReturn(order);
+    when(orderService.getOrderDetails(anyInt())).thenReturn(orderDetails);
+
     cartService.checkoutCart(2);
+
     verify(inventoryService, times(2)).markInventoryWithStatus(cartInventory1.getInventory(), InventoryStatus.SOLD);
+    verify(orderService).addOrderDetails(order);
   }
-
-
 }

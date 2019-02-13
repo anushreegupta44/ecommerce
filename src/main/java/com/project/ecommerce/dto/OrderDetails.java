@@ -4,14 +4,14 @@ import java.util.List;
 
 public class OrderDetails {
   List<OrderDetail> orderDetails;
-  private Double totalTaxes;
+  private Long totalTaxes;
   private Long totalPrice;
   private String shippingAddress;
 
   public OrderDetails() {
   }
 
-  public OrderDetails(List<OrderDetail> orderDetails, Double totalTaxes, Long totalPrice) {
+  public OrderDetails(List<OrderDetail> orderDetails, Long totalTaxes, Long totalPrice) {
     this.orderDetails = orderDetails;
     this.totalTaxes = totalTaxes;
     this.totalPrice = totalPrice;
@@ -25,11 +25,11 @@ public class OrderDetails {
     this.orderDetails = orderDetails;
   }
 
-  public Double getTotalTaxes() {
+  public Long getTotalTaxes() {
     return totalTaxes;
   }
 
-  public void setTotalTaxes(Double totalTaxes) {
+  public void setTotalTaxes(Long totalTaxes) {
     this.totalTaxes = totalTaxes;
   }
 
