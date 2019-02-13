@@ -68,9 +68,11 @@ public class CartService {
     inventoriesInCart.forEach(cartInventory -> {
       inventoryService.markInventoryWithStatus(cartInventory.getInventory(), InventoryStatus.SOLD);
     });
+    //get total price and total taxes for order
     OrderDetails orderDetails = orderService.getOrderDetails(createdOrder.getId());
     createdOrder.setTotalPrice(orderDetails.getTotalPrice());
     createdOrder.setTotalTaxes(orderDetails.getTotalTaxes());
+    //save order entity
     orderService.addOrderDetails(createdOrder);
     return createdOrder;
   }
