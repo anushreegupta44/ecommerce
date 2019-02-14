@@ -1,9 +1,11 @@
 package com.project.ecommerce.service;
 
+import com.project.ecommerce.dto.OrderAddressDto;
 import com.project.ecommerce.dto.OrderDetail;
 import com.project.ecommerce.dto.OrderDetails;
 import com.project.ecommerce.exception.CustomerNotFoundException;
 import com.project.ecommerce.exception.OrderNotFoundException;
+import com.project.ecommerce.model.Address;
 import com.project.ecommerce.model.CartInventory;
 import com.project.ecommerce.model.Order;
 import com.project.ecommerce.repository.OrderRepository;
@@ -11,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 
@@ -41,7 +44,7 @@ public class OrderService {
     if (isNull(orderDetails) || orderDetails.size() == 0) {
       throw new OrderNotFoundException();
     }
-    Long totalPrice = Long.valueOf(0);
+    Long totalPrice = 0l;
     for (OrderDetail od :
         orderDetails) {
       totalPrice += od.getPricePerUnit() * od.getCount();
@@ -58,5 +61,23 @@ public class OrderService {
     createdOrder.setTotalTaxes(orderDetails.getTotalTaxes());
     //save order entity
     return orderRepository.save(createdOrder);
+  }
+
+  public Order getOrderById(Integer orderId) throws OrderNotFoundException {
+    return orderRepository.findById(orderId).orElseThrow(() -> new OrderNotFoundException());
+  }
+
+  public void addAddressToOrder(Integer orderId, OrderAddressDto orderAddressDto) throws OrderNotFoundException {
+    Order savedOrder = getOrderById(orderId);
+    List<Address> billingAddress = savedOrder.getCustomer().getAddresses().stream()
+        .filter(address -> address.getId().equals(orderAddressDto.getBillingAddress().getId())).collect(Collectors.toList());
+    if (!isNull(billingAddress) || billingAddress.size() > 0) {
+      savedOrder.setBillingAddress(billingAddress.get(0));
+    }
+    List<Address> shippingAddress = savedOrder.getCustomer().getAddresses().stream()
+        .filter(address -> address.getId().equals(orderAddressDto.getShippingAddress().getId())).collect(Collectors.toList());
+    if (!isNull(shippingAddress) || shippingAddress.size() > 0) {
+      savedOrder.setShippingAddress(shippingAddress.get(0));
+    }
   }
 }

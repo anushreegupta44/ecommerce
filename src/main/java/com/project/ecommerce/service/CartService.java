@@ -5,6 +5,7 @@ import com.project.ecommerce.exception.*;
 import com.project.ecommerce.model.*;
 import com.project.ecommerce.repository.CartRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
