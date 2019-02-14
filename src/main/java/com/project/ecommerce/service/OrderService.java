@@ -46,7 +46,7 @@ public class OrderService {
     return orderDetails;
   }
 
-  private OrderDetails calculateOrderTotal(Integer orderId) {
+  public OrderDetails calculateOrderTotal(Integer orderId) {
     List<OrderDetail> orderDetails = orderRepository.findOrderDetails(orderId);
     if (isNull(orderDetails) || orderDetails.size() == 0) {
       throw new OrderNotFoundException();
@@ -89,7 +89,7 @@ public class OrderService {
     return savedOrder;
   }
 
-  private List<Address> getValidAddressForCustomer(Customer customer, OrderAddressDto orderAddressDto) {
+  public List<Address> getValidAddressForCustomer(Customer customer, OrderAddressDto orderAddressDto) {
     return customer.getAddresses().stream()
         .filter(address -> address.equals(orderAddressDto.getBillingAddress())
             || address.equals(orderAddressDto.getShippingAddress()))
