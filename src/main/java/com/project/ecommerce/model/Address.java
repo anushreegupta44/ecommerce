@@ -1,6 +1,7 @@
 package com.project.ecommerce.model;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "address")
@@ -46,4 +47,17 @@ public class Address {
     this.type = type;
   }
 
+  //Address are equal if their ids are equal
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Address address1 = (Address) o;
+    return Objects.equals(getId(), address1.getId());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(getId(), getAddress(), getType());
+  }
 }

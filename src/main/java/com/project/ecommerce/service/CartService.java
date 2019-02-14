@@ -5,7 +5,6 @@ import com.project.ecommerce.exception.*;
 import com.project.ecommerce.model.*;
 import com.project.ecommerce.repository.CartRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -58,7 +57,7 @@ public class CartService {
     //pull out all inventories from cart
     List<CartInventory> inventoriesInCart = cartInventoryService.getAllInventoriesInCart(cartId);
     if (inventoriesInCart == null || inventoriesInCart.size() == 0) {
-      throw new CartEmptyException();
+      throw new CartEmptyException(cartId.toString());
     }
     //create an order and map inventory to order
     Order createdOrder = orderService.createOrder(inventoriesInCart);
@@ -68,7 +67,7 @@ public class CartService {
     inventoriesInCart.forEach(cartInventory -> {
       inventoryService.markInventoryWithStatus(cartInventory.getInventory(), InventoryStatus.SOLD);
     });
-    return orderService.editOrderDetails(createdOrder);
+    return createdOrder;
   }
 
   public void deleteUserCart(Integer customerId) {

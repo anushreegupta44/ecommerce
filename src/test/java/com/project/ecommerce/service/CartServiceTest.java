@@ -91,7 +91,7 @@ public class CartServiceTest {
     Cart cart = new Cart();
     Order order = new Order();
     order.setId(1);
-    OrderDetails orderDetails = new OrderDetails(null, 9l, 9l);
+    OrderDetails orderDetails = new OrderDetails(null, 9l, 9l, null, null);
     CartInventory cartInventory1 = new CartInventory(cart, inventory);
     cartInventory1.getInventory().setStatus(InventoryStatus.IN_CART);
     CartInventory cartInventory2 = new CartInventory(cart, inventory);
@@ -104,6 +104,5 @@ public class CartServiceTest {
     cartService.checkoutCart(2);
 
     verify(inventoryService, times(2)).markInventoryWithStatus(cartInventory1.getInventory(), InventoryStatus.SOLD);
-    verify(orderService).editOrderDetails(order);
   }
 }

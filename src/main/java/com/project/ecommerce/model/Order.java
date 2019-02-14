@@ -13,7 +13,7 @@ public class Order {
   private Integer id;
 
   @ManyToOne
-  @JsonIgnore
+//  @JsonIgnore
   private Customer customer;
 
   @OneToMany

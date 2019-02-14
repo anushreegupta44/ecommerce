@@ -23,10 +23,9 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     System.out.print("Product not found Exception\n");
   }
 
-  @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Customer not found")
-  @ExceptionHandler({CustomerNotFoundException.class})
-  public void customerNotFoundExceptionHandler() {
-    System.out.print("Customer not found Exception\n");
+  @ExceptionHandler(CustomerNotFoundException.class)
+  public ResponseEntity customerNotFoundExceptionHandler(CustomerNotFoundException e) {
+    return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
   }
 
   @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Category not found")

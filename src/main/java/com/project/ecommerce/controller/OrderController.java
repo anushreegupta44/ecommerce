@@ -24,7 +24,6 @@ public class OrderController {
 
   @PostMapping("/{orderId}")
   public ResponseEntity<Order> addDetailsToOrder(@PathVariable("orderId") Integer orderId, @RequestBody OrderAddressDto orderAddressDto) throws OrderNotFoundException {
-    orderService.addAddressToOrder(orderId, orderAddressDto);
-    return null;
+    return new ResponseEntity(orderService.addAddressToOrder(orderId, orderAddressDto), HttpStatus.OK);
   }
 }
