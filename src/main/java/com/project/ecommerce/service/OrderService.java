@@ -43,6 +43,7 @@ public class OrderService {
     OrderDetails orderDetails = calculateOrderTotal(orderId);
     orderDetails.setBillingAddress(order.getBillingAddress());
     orderDetails.setShippingAddress(order.getShippingAddress());
+    orderDetails.setCustomer(order.getCustomer());
     return orderDetails;
   }
 
@@ -58,7 +59,7 @@ public class OrderService {
     }
     //assuming total taxes are always 12% of total price
     Long totalTaxes = Math.multiplyExact((long) 0.12, totalPrice);
-    return new OrderDetails(orderDetails, totalTaxes, totalPrice, null, null);
+    return new OrderDetails(orderDetails, null, totalTaxes, totalPrice, null, null);
   }
 
   public Order saveOrderTotal(Order createdOrder) throws OrderNotFoundException {

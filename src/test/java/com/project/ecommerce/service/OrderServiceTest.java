@@ -57,7 +57,7 @@ public class OrderServiceTest {
     OrderService spyOrderService = spy(orderService);
     Order order = new Order();
     doReturn(order).when(spyOrderService).getOrderById(anyInt());
-    doReturn(new OrderDetails(null, 0l, 12l, new Address(), new Address())).when(spyOrderService).calculateOrderTotal(anyInt());
+    doReturn(new OrderDetails(null, null, 0l, 12l, new Address(), new Address())).when(spyOrderService).calculateOrderTotal(anyInt());
     OrderDetails orderDetails = spyOrderService.getOrderDetails(2);
     assertEquals((Long) orderDetails.getTotalPrice(), (Long) 12l);
   }
@@ -72,7 +72,7 @@ public class OrderServiceTest {
   public void shouldPopulateOrderDetails() {
     Order order = new Order();
     order.setBillingAddress(new Address());
-    OrderDetails orderDetails = new OrderDetails(null, 0l, 9l, null, null);
+    OrderDetails orderDetails = new OrderDetails(null, null, 0l, 9l, null, null);
     OrderService spyOrderService = spy(orderService);
     doReturn(order).when(spyOrderService).getOrderById(anyInt());
     doReturn(orderDetails).when(spyOrderService).calculateOrderTotal(anyInt());

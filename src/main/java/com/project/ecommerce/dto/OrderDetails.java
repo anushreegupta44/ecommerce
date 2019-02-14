@@ -1,11 +1,13 @@
 package com.project.ecommerce.dto;
 
 import com.project.ecommerce.model.Address;
+import com.project.ecommerce.model.Customer;
 
 import java.util.List;
 
 public class OrderDetails {
   List<OrderDetail> orderDetails;
+  private Customer customer;
   private Long totalTaxes;
   private Long totalPrice;
   private Address shippingAddress;
@@ -14,8 +16,9 @@ public class OrderDetails {
   public OrderDetails() {
   }
 
-  public OrderDetails(List<OrderDetail> orderDetails, Long totalTaxes, Long totalPrice, Address shippingAddress, Address billingAddress) {
+  public OrderDetails(List<OrderDetail> orderDetails, Customer customer, Long totalTaxes, Long totalPrice, Address shippingAddress, Address billingAddress) {
     this.orderDetails = orderDetails;
+    this.customer = customer;
     this.totalTaxes = totalTaxes;
     this.totalPrice = totalPrice;
     this.shippingAddress = shippingAddress;
@@ -61,5 +64,13 @@ public class OrderDetails {
 
   public void setBillingAddress(Address billingAddress) {
     this.billingAddress = billingAddress;
+  }
+
+  public Customer getCustomer() {
+    return customer;
+  }
+
+  public void setCustomer(Customer customer) {
+    this.customer = customer;
   }
 }
