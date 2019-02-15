@@ -37,14 +37,4 @@ public class CustomerService {
     customerRepository.deleteById(customerId);
   }
 
-  public ValidationResponse validateCustomerExists(Integer customerId) {
-    Optional<Customer> customer = customerRepository.findById(customerId);
-    if (!customer.isPresent()) {
-      return new ValidationResponse(false, new HashMap<String, String>() {{
-        put("customer", "customer.does.not.exist");
-      }});
-    } else return new ValidationResponse(true, null);
-
-  }
-
 }

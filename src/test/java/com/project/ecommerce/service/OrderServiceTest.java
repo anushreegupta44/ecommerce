@@ -1,12 +1,12 @@
 package com.project.ecommerce.service;
 
-import com.project.ecommerce.dto.OrderAddressDto;
 import com.project.ecommerce.dto.OrderDetails;
+import com.project.ecommerce.dto.OrderDetailsDto;
 import com.project.ecommerce.exception.CustomerNotFoundException;
 import com.project.ecommerce.exception.OrderNotFoundException;
 import com.project.ecommerce.model.*;
 import com.project.ecommerce.repository.OrderRepository;
-import org.hamcrest.MatcherAssert;
+import org.aspectj.weaver.ast.Or;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -14,10 +14,14 @@ import org.mockito.Mock;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
+import static com.project.ecommerce.model.ModeOfPayment.UPI;
 import static junit.framework.TestCase.*;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
@@ -55,7 +59,7 @@ public class OrderServiceTest {
   @Test
   public void shouldCreateOrderDetails() throws OrderNotFoundException {
     OrderService spyOrderService = spy(orderService);
-    Order order = new Order();
+    Order order = mock(Order.class);
     doReturn(order).when(spyOrderService).getOrderById(anyInt());
     doReturn(new OrderDetails(null, null, 0l, 12l, new Address(), new Address())).when(spyOrderService).calculateOrderTotal(anyInt());
     OrderDetails orderDetails = spyOrderService.getOrderDetails(2);
@@ -65,7 +69,7 @@ public class OrderServiceTest {
   @Test(expected = OrderNotFoundException.class)
   public void shouldThrowExpIfNoOrderDetailExists() throws OrderNotFoundException {
     when(orderRepository.findOrderDetails(anyInt())).thenReturn(Arrays.asList());
-    OrderDetails orderDetails = orderService.getOrderDetails(2);
+    orderService.getOrderDetails(2);
   }
 
   @Test
@@ -92,10 +96,10 @@ public class OrderServiceTest {
     invalidBillingAddress.setId(3);
     Address invalidShippingAddress = new Address("789", AddressType.SHIPPING);
     invalidShippingAddress.setId(4);
-    Customer customer = new Customer("name", "989720432", null, Arrays.asList(billingAddress, shippingAddress));
-    OrderAddressDto orderAddressDto = new OrderAddressDto(invalidShippingAddress, invalidBillingAddress);
-    List<Address> addressList = orderService.getValidAddressForCustomer(customer, orderAddressDto);
-    MatcherAssert.assertThat(addressList.size(), is(0));
+    Customer customer = new Customer("name", "989720432", null, Arrays.asList(billingAddress, shippingAddress), null);
+    OrderDetailsDto orderDetailsDto = new OrderDetailsDto(invalidShippingAddress, invalidBillingAddress, null);
+    List<Address> addressList = orderService.getValidAddressForCustomer(customer, orderDetailsDto);
+    assertThat(addressList.size(), is(0));
   }
 
   @Test
@@ -108,10 +112,10 @@ public class OrderServiceTest {
     invalidBillingAddress.setId(3);
     Address invalidShippingAddress = new Address("789", AddressType.SHIPPING);
     invalidShippingAddress.setId(4);
-    Customer customer = new Customer("name", "989720432", null, Arrays.asList(billingAddress, shippingAddress));
-    OrderAddressDto orderAddressDto = new OrderAddressDto(billingAddress, invalidBillingAddress);
-    List<Address> addressList = orderService.getValidAddressForCustomer(customer, orderAddressDto);
-    MatcherAssert.assertThat(addressList.size(), is(1));
+    Customer customer = new Customer("name", "989720432", null, Arrays.asList(billingAddress, shippingAddress), null);
+    OrderDetailsDto orderDetailsDto = new OrderDetailsDto(billingAddress, invalidBillingAddress, null);
+    List<Address> addressList = orderService.getValidAddressForCustomer(customer, orderDetailsDto);
+    assertThat(addressList.size(), is(1));
   }
 
   @Test
@@ -120,29 +124,66 @@ public class OrderServiceTest {
     Customer customer = new Customer();
     order.setCustomer(customer);
     Address shippingAddress = new Address("address", AddressType.SHIPPING);
-    OrderAddressDto orderAddressDto = new OrderAddressDto();
+    OrderDetailsDto orderDetailsDto = new OrderDetailsDto();
+    OrderService spyOrderService = spy(orderService);
+    doReturn(Collections.singletonList(shippingAddress)).when(spyOrderService)
+        .getValidAddressForCustomer(any(Customer.class), any(OrderDetailsDto.class));
+    spyOrderService.addAddressToOrder(order, orderDetailsDto);
+    assertThat(order.getShippingAddress(), is(shippingAddress));
+  }
+
+  @Test
+  public void shouldAddPaymentMethodToOrder() {
+    Order order = new Order();
+    Customer customer = new Customer();
+    PaymentMode paymentMode = new PaymentMode(UPI, "", customer);
+    OrderDetailsDto orderDetailsDto = new OrderDetailsDto();
+    orderDetailsDto.setPaymentMode(paymentMode);
+    order.setCustomer(customer);
+    order.setPaymentMode(paymentMode);
+    OrderService spyOrderService = spy(orderService);
+    doReturn(Optional.of(paymentMode)).when(spyOrderService).getValidPaymentMode(any(Order.class), any(PaymentMode.class));
+    spyOrderService.addPaymentMethodToOrder(order, orderDetailsDto);
+    assertThat(order.getPaymentMode(), is(paymentMode));
+  }
+
+  @Test
+  public void shouldSaveOrder() {
+    Order order = new Order();
     OrderService spyOrderService = spy(orderService);
     doReturn(order).when(spyOrderService).getOrderById(anyInt());
-    doReturn(Arrays.asList(shippingAddress)).when(spyOrderService)
-        .getValidAddressForCustomer(any(Customer.class), any(OrderAddressDto.class));
-    spyOrderService.addAddressToOrder(2, orderAddressDto);
+    doReturn(order).when(spyOrderService).addAddressToOrder(any(Order.class), any(OrderDetailsDto.class));
+    doReturn(order).when(spyOrderService).addPaymentMethodToOrder(any(Order.class), any(OrderDetailsDto.class));
+    spyOrderService.addOrderDetails(2, new OrderDetailsDto());
     verify(orderRepository).save(order);
   }
 
   @Test
-  public void shouldSaveAddressesOnceIfIncomingAdressIsValid() {
+  public void shouldReturnEmptyOptionalIfNoValidPaymentMode() {
     Order order = new Order();
     Customer customer = new Customer();
+    PaymentMode paymentMode = new PaymentMode();
+    paymentMode.setId(1);
+    customer.setPaymentModes(Collections.singletonList(paymentMode));
     order.setCustomer(customer);
-    Address shippingAddress = new Address("address", AddressType.SHIPPING);
-    Address billingAddress = new Address("address", AddressType.BILLING);
-    OrderAddressDto orderAddressDto = new OrderAddressDto();
-    OrderService spyOrderService = spy(orderService);
-    doReturn(order).when(spyOrderService).getOrderById(anyInt());
-    doReturn(Arrays.asList(shippingAddress, billingAddress)).when(spyOrderService)
-        .getValidAddressForCustomer(any(Customer.class), any(OrderAddressDto.class));
-    spyOrderService.addAddressToOrder(2, orderAddressDto);
-    verify(orderRepository).save(order);
+    PaymentMode paymentModeDto = new PaymentMode();
+    paymentModeDto.setId(2);
+    Optional<PaymentMode> paymentMode1 = orderService.getValidPaymentMode(order, paymentModeDto);
+    assertFalse(paymentMode1.isPresent());
+  }
+
+  @Test
+  public void shouldReturnOptionalIfValidPaymentMode() {
+    Order order = new Order();
+    Customer customer = new Customer();
+    PaymentMode paymentMode = new PaymentMode();
+    paymentMode.setId(1);
+    customer.setPaymentModes(Collections.singletonList(paymentMode));
+    order.setCustomer(customer);
+    PaymentMode paymentModeDto = new PaymentMode();
+    paymentModeDto.setId(1);
+    Optional<PaymentMode> paymentMode1 = orderService.getValidPaymentMode(order, paymentModeDto);
+    assertTrue(paymentMode1.isPresent());
   }
 
 }

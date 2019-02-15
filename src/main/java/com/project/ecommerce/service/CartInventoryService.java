@@ -1,16 +1,13 @@
 package com.project.ecommerce.service;
 
 import com.project.ecommerce.dto.InCartProduct;
-import com.project.ecommerce.exception.InventoryAlreadyInCartException;
 import com.project.ecommerce.exception.InventoryNotFoundException;
 import com.project.ecommerce.model.Cart;
 import com.project.ecommerce.model.CartInventory;
 import com.project.ecommerce.model.Inventory;
 import com.project.ecommerce.model.InventoryStatus;
 import com.project.ecommerce.repository.CartInventoryRepository;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -24,18 +21,11 @@ public class CartInventoryService {
   @Autowired
   private InventoryService inventoryService;
 
-  //mapping cart to inventory since an inventory can be in many carts till its status is not SOLD, hence kept the mapping for cart and inventory as manytomany
-  public void mapCartToInventory(Cart cart, Inventory availableInventory) throws InventoryAlreadyInCartException {
+  public void mapCartToInventory(Cart cart, Inventory availableInventory) {
     CartInventory cartInventory = new CartInventory(cart, availableInventory);
-    try {
-      cartInventoryRepository.save(cartInventory);
-    } catch (DataIntegrityViolationException | ConstraintViolationException e) {
-      throw new InventoryAlreadyInCartException();
-    }
+    cartInventoryRepository.save(cartInventory);
   }
 
-  //deleting an product from the cart would mean deleting the mapping of the cart to pne of the product's inventory currently inCart
-  //also would need to mark the inventory back to AVAILABLE if it is not in any cart
   @Transactional
   public void deleteCartInventory(Integer cartId, Integer productId) throws InventoryNotFoundException {
     List<CartInventory> cartInventories = getAllProductInventoriesInCart(cartId, productId);

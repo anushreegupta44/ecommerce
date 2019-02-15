@@ -20,8 +20,6 @@ public class OrderInventoryService {
     try {
       orderInventoryRepository.save(orderInventory);
     } catch (DataIntegrityViolationException | ConstraintViolationException e) {
-      //do nothing if an inventory that was in some other cart has already been checked out.
-      // Continue to create an order for other inventories
       System.out.print("Inventory present in another order\n");
     }
   }

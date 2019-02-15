@@ -87,15 +87,10 @@ public class CartServiceTest {
 
   @Test
   public void shouldMarkBothInventoriesAsSold() throws CustomerNotFoundException, CartEmptyException, OrderNotFoundException {
-    Inventory inventory = new Inventory();
-    Cart cart = new Cart();
-    Order order = new Order();
-    order.setId(1);
-    OrderDetails orderDetails = new OrderDetails(null, null, 9l, 9l, null, null);
-    CartInventory cartInventory1 = new CartInventory(cart, inventory);
-    cartInventory1.getInventory().setStatus(InventoryStatus.IN_CART);
-    CartInventory cartInventory2 = new CartInventory(cart, inventory);
-    cartInventory2.getInventory().setStatus(InventoryStatus.IN_CART);
+    Order order = mock(Order.class);
+    OrderDetails orderDetails = mock(OrderDetails.class);
+    CartInventory cartInventory1 = mock(CartInventory.class);
+    CartInventory cartInventory2 = mock(CartInventory.class);
 
     when(cartInventoryService.getAllInventoriesInCart(anyInt())).thenReturn(Arrays.asList(cartInventory1, cartInventory2));
     when(orderService.createOrder(anyList())).thenReturn(order);

@@ -29,14 +29,21 @@ public class Customer {
   @NotNull
   private List<Address> addresses;
 
+  @OneToMany(cascade = CascadeType.ALL)
+  @JoinColumn(name = "customer_id")
+  @NotNull
+  private List<PaymentMode> paymentModes;
+
   public Customer() {
   }
 
-  public Customer(String name, String phone, List<Order> orders, List<Address> addresses) {
+
+  public Customer(@NotNull String name, @NotNull String phone, List<Order> orders, @NotNull List<Address> addresses, @NotNull List<PaymentMode> paymentModes) {
     this.name = name;
     this.phone = phone;
     this.orders = orders;
     this.addresses = addresses;
+    this.paymentModes = paymentModes;
   }
 
   public Integer getId() {
@@ -77,5 +84,13 @@ public class Customer {
 
   public void setAddresses(List<Address> addresses) {
     this.addresses = addresses;
+  }
+
+  public List<PaymentMode> getPaymentModes() {
+    return paymentModes;
+  }
+
+  public void setPaymentModes(List<PaymentMode> paymentModes) {
+    this.paymentModes = paymentModes;
   }
 }

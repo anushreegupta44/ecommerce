@@ -27,6 +27,9 @@ public class Order {
   @ManyToOne
   private Address billingAddress;
 
+  @ManyToOne
+  private PaymentMode paymentMode;
+
   private Long totalPrice;
 
   private Long totalTaxes;
@@ -39,11 +42,12 @@ public class Order {
     this.orderInventories = orderInventories;
   }
 
-  public Order(Customer customer, List<OrderInventory> orderInventories, Address shippingAddress, Address billingAddress, Long totalPrice, Long totalTaxes) {
+  public Order(Customer customer, List<OrderInventory> orderInventories, Address shippingAddress, Address billingAddress, PaymentMode paymentMode, Long totalPrice, Long totalTaxes) {
     this.customer = customer;
     this.orderInventories = orderInventories;
     this.shippingAddress = shippingAddress;
     this.billingAddress = billingAddress;
+    this.paymentMode = paymentMode;
     this.totalPrice = totalPrice;
     this.totalTaxes = totalTaxes;
   }
@@ -102,5 +106,13 @@ public class Order {
 
   public void setTotalTaxes(Long totalTaxes) {
     this.totalTaxes = totalTaxes;
+  }
+
+  public PaymentMode getPaymentMode() {
+    return paymentMode;
+  }
+
+  public void setPaymentMode(PaymentMode paymentMode) {
+    this.paymentMode = paymentMode;
   }
 }

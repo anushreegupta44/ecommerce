@@ -88,17 +88,15 @@ public class CartControllerTest {
 
   @Test
   public void shouldCheckoutCart() throws Exception {
-    Cart cart = mock(Cart.class);
     Order order = new Order();
     order.setOrderInventories(Arrays.asList(new OrderInventory()));
-    order.setCustomer(new Customer("customer", "phone", null, null));
+    order.setCustomer(new Customer("customer", "phone", null, null, null));
     when(cartService.checkoutCart(anyInt())).thenReturn(order);
     MvcResult result = mockMvc.perform(
         post("/cart/2/checkout")
     ).andExpect(status().isOk()).andReturn();
     String content = result.getResponse().getContentAsString();
     assertTrue(content.contains("id"));
-    assertFalse(content.contains("customer"));
   }
 
 }

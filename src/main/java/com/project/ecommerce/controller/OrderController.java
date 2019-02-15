@@ -1,6 +1,6 @@
 package com.project.ecommerce.controller;
 
-import com.project.ecommerce.dto.OrderAddressDto;
+import com.project.ecommerce.dto.OrderDetailsDto;
 import com.project.ecommerce.dto.OrderDetails;
 import com.project.ecommerce.exception.OrderNotFoundException;
 import com.project.ecommerce.model.Order;
@@ -23,7 +23,7 @@ public class OrderController {
   }
 
   @PostMapping("/{orderId}")
-  public ResponseEntity<Order> addDetailsToOrder(@PathVariable("orderId") Integer orderId, @RequestBody OrderAddressDto orderAddressDto) throws OrderNotFoundException {
-    return new ResponseEntity(orderService.addAddressToOrder(orderId, orderAddressDto), HttpStatus.OK);
+  public ResponseEntity<Order> addDetailsToOrder(@PathVariable("orderId") Integer orderId, @RequestBody OrderDetailsDto orderDetailsDto) throws OrderNotFoundException {
+    return new ResponseEntity(orderService.addOrderDetails(orderId, orderDetailsDto), HttpStatus.OK);
   }
 }

@@ -32,19 +32,8 @@ public class CartInventoryServiceTest {
   public void shouldSaveCartInventory() throws InventoryAlreadyInCartException {
     Cart cart = mock(Cart.class);
     Inventory inventory = mock(Inventory.class);
-    CartInventory cartInventory = new CartInventory(cart, inventory);
     cartInventoryService.mapCartToInventory(cart, inventory);
-    verify(cartInventoryRepository).save(cartInventory);
-  }
-
-  @Test(expected = InventoryAlreadyInCartException.class)
-  public void shouldThrowErrIfInventoryExistsForCart() throws InventoryAlreadyInCartException {
-    Cart cart = mock(Cart.class);
-    Inventory inventory = mock(Inventory.class);
-    CartInventory cartInventory = new CartInventory(cart, inventory);
-    when(cartInventoryRepository.save(any(CartInventory.class))).thenThrow(ConstraintViolationException.class);
-    cartInventoryService.mapCartToInventory(cart, inventory);
-    verify(cartInventoryRepository).save(cartInventory);
+    verify(cartInventoryRepository).save(any(CartInventory.class));
   }
 
   @Test

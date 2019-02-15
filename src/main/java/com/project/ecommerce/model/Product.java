@@ -35,11 +35,12 @@ public class Product {
   public Product() {
   }
 
-  public Product(@NotNull String name, @NotNull String description, List<Category> categories, List<Inventory> inventories) {
+  public Product(@NotNull String name, @NotNull String description, @NotNull List<Category> categories, List<Inventory> inventories, @NotNull Long pricePerUnit) {
     this.name = name;
     this.description = description;
     this.categories = categories;
     this.inventories = inventories;
+    this.pricePerUnit = pricePerUnit;
   }
 
   public Integer getId() {

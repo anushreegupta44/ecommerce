@@ -32,7 +32,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @AutoConfigureMockMvc
 @SpringBootTest(classes = {EcommerceApplication.class})
-
 public class ProductControllerTest {
 
   @Autowired
@@ -46,7 +45,7 @@ public class ProductControllerTest {
 
   @Test
   public void shouldGetProduct() throws Exception {
-    Product product = new Product("product", "description of product", null, null);
+    Product product = new Product("product", "description of product", null, null, null);
     when(productService.getProductById(1)).thenReturn(product);
     mockMvc.perform(
         get("/products/1")
@@ -79,11 +78,11 @@ public class ProductControllerTest {
 
   @Test
   public void shouldUpdateProduct() throws Exception {
-    Product incomingProduct = new Product("name", "description", Arrays.asList(new Category("category1")), null);
+    Product incomingProduct = new Product("name", "description", Arrays.asList(new Category("category1")), null, 2l);
     String incomingProductJson = objectMapper.writeValueAsString(incomingProduct);
     when(productService.updateProduct(2, incomingProduct)).thenReturn(incomingProduct);
     mockMvc.perform(
-        put("/products/2")
+        post("/products/2")
             .content(incomingProductJson)
             .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
     ).andExpect(status().isOk());
@@ -91,12 +90,12 @@ public class ProductControllerTest {
 
   @Test
   public void shouldThrowExceptionIfProductNotFoundUpdate() throws Exception {
-    Product incomingProduct = new Product("name", "description", Arrays.asList(new Category("category1")), null);
+    Product incomingProduct = new Product("name", "description", Arrays.asList(new Category("category1")), null, 2l);
     String incomingProductJson = objectMapper.writeValueAsString(incomingProduct);
     when(productService.updateProduct(eq(2), any(Product.class))).thenThrow(new ProductNotFoundException());
 
     MvcResult result = mockMvc.perform(
-        put("/products/2")
+        post("/products/2")
             .content(incomingProductJson)
             .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
     ).andExpect(status().isNotFound()).andReturn();
@@ -107,14 +106,11 @@ public class ProductControllerTest {
 
   @Test
   public void shouldGetListOfProducts() throws Exception {
-    Product product = new Product("product", "description of product", null, null);
+    Product product = new Product("product", "description of product", null, null, null);
     when(productService.getAllProducts()).thenReturn(Arrays.asList(product));
-    MvcResult result = mockMvc.perform(
+    mockMvc.perform(
         get("/products")
-    ).andExpect(status().isOk())
-        .andReturn();
-    String content = result.getResponse().getContentAsString();
-    assertThat(content, is("[{\"id\":null,\"name\":\"product\",\"description\":\"description of product\",\"categories\":null,\"inventories\":null}]"));
+    ).andExpect(status().isOk());
   }
 
 

@@ -25,7 +25,6 @@ public class CartService {
   @Autowired
   private OrderService orderService;
 
-  //kept as Transactional block since the inventory status should not be IN_CART unless it is actually mapped to a cart
   @Transactional
   public void addProductToCart(Integer cartId, Integer productId) throws InventoryNotFoundException, CartNotFoundException, InventoryAlreadyInCartException {
     Inventory availableInventory = inventoryService.getInventoryToAdd(productId);
@@ -43,27 +42,21 @@ public class CartService {
     return cartRepository.save(cart);
   }
 
-  //Removing a product from cart is essentially deleting a cartInventory
   public void removeProductFromCart(Integer cartId, Integer productId) throws InventoryNotFoundException {
     cartInventoryService.deleteCartInventory(cartId, productId);
   }
 
-  //gets every product and its quantity in a specific cart
   public List<InCartProduct> getItemsInCart(Integer cartId) {
     return cartInventoryService.getProductDetailsInCart(cartId);
   }
 
   public Order checkoutCart(Integer cartId) throws CartEmptyException, CustomerNotFoundException, OrderNotFoundException {
-    //pull out all inventories from cart
     List<CartInventory> inventoriesInCart = cartInventoryService.getAllInventoriesInCart(cartId);
     if (inventoriesInCart == null || inventoriesInCart.size() == 0) {
       throw new CartEmptyException(cartId.toString());
     }
-    //create an order and map inventory to order
     Order createdOrder = orderService.createOrder(inventoriesInCart);
-    //delete all inventories from cart(cartInventory mapping)
     cartInventoryService.deleteCartInventoriesInCart(cartId);
-    //mark inventories as SOLD
     inventoriesInCart.forEach(cartInventory -> {
       inventoryService.markInventoryWithStatus(cartInventory.getInventory(), InventoryStatus.SOLD);
     });
@@ -71,12 +64,9 @@ public class CartService {
   }
 
   public void deleteUserCart(Integer customerId) {
-    //find the cart that belongs to user
     Optional<Cart> customerCart = cartRepository.findCartByCustomer_Id(customerId);
     if (customerCart.isPresent()) {
-      //find all cartInventories for the customer and delete them
       cartInventoryService.deleteCartInventoriesInCart(customerCart.get().getId());
-      //delete the cart finally
       cartRepository.delete(customerCart.get());
     }
   }
