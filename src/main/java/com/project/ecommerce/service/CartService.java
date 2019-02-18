@@ -70,4 +70,8 @@ public class CartService {
       cartRepository.delete(customerCart.get());
     }
   }
+
+  public Cart getCartForCustomer(Integer customerId) {
+    return cartRepository.findCartByCustomer_Id(customerId).orElseThrow(CartNotFoundException::new);
+  }
 }

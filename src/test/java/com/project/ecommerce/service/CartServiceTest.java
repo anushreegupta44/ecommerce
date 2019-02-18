@@ -3,6 +3,7 @@ package com.project.ecommerce.service;
 import com.project.ecommerce.dto.OrderDetails;
 import com.project.ecommerce.exception.*;
 import com.project.ecommerce.model.*;
+import com.project.ecommerce.repository.CartRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -12,7 +13,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Arrays;
+import java.util.Optional;
 
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -28,6 +31,9 @@ public class CartServiceTest {
 
   @Mock
   private OrderService orderService;
+
+  @Mock
+  private CartRepository cartRepository;
 
   @Test(expected = InventoryNotFoundException.class)
   public void shouldThrowExceptionIfInventoryDoesNotExistForProduct() throws InventoryNotFoundException, CartNotFoundException, InventoryAlreadyInCartException {
@@ -99,5 +105,19 @@ public class CartServiceTest {
     cartService.checkoutCart(2);
 
     verify(inventoryService, times(2)).markInventoryWithStatus(cartInventory1.getInventory(), InventoryStatus.SOLD);
+  }
+
+  @Test(expected = CartNotFoundException.class)
+  public void shouldThrowExceptionIfCartNotFound() {
+    when(cartRepository.findCartByCustomer_Id(anyInt())).thenReturn(Optional.empty());
+    cartService.getCartForCustomer(2);
+  }
+
+  @Test
+  public void shouldReturnCartForCustomer() {
+    Cart cart = mock(Cart.class);
+    when(cartRepository.findCartByCustomer_Id(anyInt())).thenReturn(Optional.ofNullable(cart));
+    Cart returnedCart = cartService.getCartForCustomer(2);
+    assertNotNull(returnedCart);
   }
 }

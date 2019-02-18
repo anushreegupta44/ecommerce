@@ -48,7 +48,7 @@ public class CartControllerTest {
   @Test
   public void shouldAddProductToCart() throws Exception {
     mockMvc.perform(
-        post("/cart/2/product/2")
+        post("/carts/2/products/2")
     ).andExpect(status().isOk());
   }
 
@@ -56,7 +56,7 @@ public class CartControllerTest {
   public void shouldNotAddProductToCart() throws Exception {
     Mockito.doThrow(new InventoryNotFoundException()).when(cartService).addProductToCart(anyInt(), anyInt());
     MvcResult result = mockMvc.perform(
-        post("/cart/2/product/2")
+        post("/carts/2/products/2")
     ).andExpect(status().isNotFound())
         .andReturn();
     String errorMessage = result.getResponse().getErrorMessage();
@@ -66,7 +66,7 @@ public class CartControllerTest {
   @Test
   public void shouldDeleteProductInCart() throws Exception {
     mockMvc.perform(
-        delete("/cart/2/product/2")
+        delete("/carts/2/products/2")
     ).andExpect(status().isNoContent());
   }
 
@@ -77,7 +77,7 @@ public class CartControllerTest {
     InCartProduct inCartProduct2 = new InCartProduct(2, 4l, "product2", "description2");
     when(cartService.getItemsInCart(anyInt())).thenReturn(Arrays.asList(inCartProduct1, inCartProduct2));
     MvcResult result = mockMvc.perform(
-        get("/cart/2")
+        get("/carts/2")
     ).andExpect(status().isOk())
         .andReturn();
     assertFalse(result.getResponse().getContentAsString().isEmpty());
@@ -93,10 +93,22 @@ public class CartControllerTest {
     order.setCustomer(new Customer("customer", "phone", null, null, null));
     when(cartService.checkoutCart(anyInt())).thenReturn(order);
     MvcResult result = mockMvc.perform(
-        post("/cart/2/checkout")
+        post("/carts/2/checkout")
     ).andExpect(status().isOk()).andReturn();
     String content = result.getResponse().getContentAsString();
     assertTrue(content.contains("id"));
+  }
+
+  @Test
+  public void shouldGetCartForCustomer() throws Exception {
+    Cart cart = new Cart();
+    when(cartService.getCartForCustomer(anyInt())).thenReturn(cart);
+    MvcResult result = mockMvc.perform(
+        get("/carts/customers/2")
+    ).andExpect(status().isOk()).andReturn();
+    String content = result.getResponse().getContentAsString();
+    System.out.print(content);
+    assertTrue(content.contains("inventories"));
   }
 
 }

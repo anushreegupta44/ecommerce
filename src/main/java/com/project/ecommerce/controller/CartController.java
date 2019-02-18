@@ -1,8 +1,10 @@
 package com.project.ecommerce.controller;
 
 import com.project.ecommerce.exception.*;
+import com.project.ecommerce.model.Cart;
 import com.project.ecommerce.model.Order;
 import com.project.ecommerce.service.CartService;
+import com.project.ecommerce.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,13 +15,16 @@ import java.util.List;
 import static org.springframework.http.ResponseEntity.noContent;
 
 @RestController
-@RequestMapping("/cart")
+@RequestMapping("/carts")
 public class CartController {
 
   @Autowired
   private CartService cartService;
 
-  @PostMapping("/{cartId}/product/{productId}")
+  @Autowired
+  private CustomerService customerService;
+
+  @PostMapping("/{cartId}/products/{productId}")
   public ResponseEntity addItemToCart(@PathVariable("cartId") Integer cartId,
                                       @PathVariable("productId") Integer productId)
       throws InventoryNotFoundException, CartNotFoundException, InventoryAlreadyInCartException {
@@ -27,7 +32,7 @@ public class CartController {
     return new ResponseEntity(HttpStatus.OK);
   }
 
-  @DeleteMapping("/{cartId}/product/{productId}")
+  @DeleteMapping("/{cartId}/products/{productId}")
   public ResponseEntity deleteItemFromCart(@PathVariable("cartId") Integer cartId,
                                            @PathVariable("productId") Integer productId) throws InventoryNotFoundException {
     cartService.removeProductFromCart(cartId, productId);
@@ -45,4 +50,8 @@ public class CartController {
     return new ResponseEntity(cartService.checkoutCart(cartId), HttpStatus.OK);
   }
 
+  @GetMapping("/customers/{customerId}")
+  public ResponseEntity<Cart> getCartForCustomer(@PathVariable("customerId") Integer customerId) {
+    return new ResponseEntity(cartService.getCartForCustomer(customerId), HttpStatus.OK);
+  }
 }
