@@ -1,4 +1,4 @@
 package com.project.ecommerce.exception;
 
-public class InventoryAlreadyInCartException extends RuntimeException {
+public class InventoryAlreadyInCartException extends Exception {
 }

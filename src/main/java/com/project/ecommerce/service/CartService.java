@@ -71,7 +71,7 @@ public class CartService {
     }
   }
 
-  public Cart getCartForCustomer(Integer customerId) {
+  public Cart getCartForCustomer(Integer customerId) throws CartNotFoundException {
     return cartRepository.findCartByCustomer_Id(customerId).orElseThrow(CartNotFoundException::new);
   }
 }

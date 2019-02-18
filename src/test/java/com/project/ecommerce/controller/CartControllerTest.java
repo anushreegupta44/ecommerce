@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -89,7 +90,7 @@ public class CartControllerTest {
   @Test
   public void shouldCheckoutCart() throws Exception {
     Order order = new Order();
-    order.setOrderInventories(Arrays.asList(new OrderInventory()));
+    order.setOrderInventories(Collections.singletonList(new OrderInventory()));
     order.setCustomer(new Customer("customer", "phone", null, null, null));
     when(cartService.checkoutCart(anyInt())).thenReturn(order);
     MvcResult result = mockMvc.perform(

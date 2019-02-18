@@ -44,14 +44,13 @@ public class CartController {
     return new ResponseEntity(cartService.getItemsInCart(cartId), HttpStatus.OK);
   }
 
-  //Returns the id of the created order
   @PostMapping("/{cartId}/checkout")
   public ResponseEntity<Order> checkoutCart(@PathVariable("cartId") Integer cartId) throws CartEmptyException, CustomerNotFoundException, OrderNotFoundException {
     return new ResponseEntity(cartService.checkoutCart(cartId), HttpStatus.OK);
   }
 
   @GetMapping("/customers/{customerId}")
-  public ResponseEntity<Cart> getCartForCustomer(@PathVariable("customerId") Integer customerId) {
+  public ResponseEntity<Cart> getCartForCustomer(@PathVariable("customerId") Integer customerId) throws CartNotFoundException {
     return new ResponseEntity(cartService.getCartForCustomer(customerId), HttpStatus.OK);
   }
 }

@@ -37,12 +37,12 @@ public class OrderServiceTest {
   private OrderInventoryService orderInventoryService;
 
   @Test(expected = CustomerNotFoundException.class)
-  public void shouldThrowExcIfCustomerNotFound() throws CustomerNotFoundException {
+  public void shouldThrowExcIfCustomerNotFound() throws CustomerNotFoundException, OrderNotFoundException {
     orderService.createOrder(Arrays.asList());
   }
 
   @Test
-  public void shouldCreateOrder() throws CustomerNotFoundException {
+  public void shouldCreateOrder() throws CustomerNotFoundException, OrderNotFoundException {
     CartInventory cartInventory1 = new CartInventory();
     Cart cart = new Cart();
     Customer customer = new Customer();
@@ -67,12 +67,12 @@ public class OrderServiceTest {
 
   @Test(expected = OrderNotFoundException.class)
   public void shouldThrowExpIfNoOrderDetailExists() throws OrderNotFoundException {
-    when(orderRepository.findOrderDetails(anyInt())).thenReturn(Arrays.asList());
+    when(orderRepository.findOrderDetails(anyInt())).thenReturn(Collections.emptyList());
     orderService.getOrderDetails(2);
   }
 
   @Test
-  public void shouldPopulateOrderDetails() {
+  public void shouldPopulateOrderDetails() throws OrderNotFoundException {
     Order order = new Order();
     order.setBillingAddress(new Address());
     OrderDetails orderDetails = new OrderDetails(null, null, 0l, 9l, null, null);
@@ -118,7 +118,7 @@ public class OrderServiceTest {
   }
 
   @Test
-  public void shouldSaveAddressesIfIncomingAdressIsValid() {
+  public void shouldSaveAddressesIfIncomingAdressIsValid() throws OrderNotFoundException {
     Order order = new Order();
     Customer customer = new Customer();
     order.setCustomer(customer);
@@ -147,7 +147,7 @@ public class OrderServiceTest {
   }
 
   @Test
-  public void shouldSaveOrder() {
+  public void shouldSaveOrder() throws OrderNotFoundException {
     Order order = new Order();
     OrderService spyOrderService = spy(orderService);
     doReturn(order).when(spyOrderService).getOrderById(anyInt());

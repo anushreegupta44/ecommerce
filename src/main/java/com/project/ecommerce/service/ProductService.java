@@ -5,7 +5,6 @@ import com.project.ecommerce.exception.ProductNotFoundException;
 import com.project.ecommerce.model.Category;
 import com.project.ecommerce.model.Product;
 import com.project.ecommerce.repository.ProductRepository;
-import com.project.ecommerce.util.ValidationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

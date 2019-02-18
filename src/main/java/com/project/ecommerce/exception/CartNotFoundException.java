@@ -1,4 +1,4 @@
 package com.project.ecommerce.exception;
 
-public class CartNotFoundException extends RuntimeException {
+public class CartNotFoundException extends Exception {
 }

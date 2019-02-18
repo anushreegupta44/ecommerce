@@ -6,15 +6,11 @@ import com.project.ecommerce.model.Inventory;
 import com.project.ecommerce.model.InventoryStatus;
 import com.project.ecommerce.model.Product;
 import com.project.ecommerce.repository.InventoryRepository;
-import com.project.ecommerce.util.ValidationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-
-import static java.util.Objects.isNull;
 
 @Service
 public class InventoryService {
@@ -28,7 +24,10 @@ public class InventoryService {
   public Inventory getInventoryToAdd(Integer productId) throws InventoryNotFoundException {
     List<Inventory> availableInventoryList = inventoryRepository.findInventoriesByProduct_IdAndStatus(productId, InventoryStatus.AVAILABLE);
     Optional<Inventory> availableInventory = availableInventoryList.stream().findAny();
-    return availableInventory.orElseGet(() -> getInventoryInCart(productId));
+    if (availableInventory.isPresent()) {
+      return availableInventory.get();
+    } else
+      return getInventoryInCart(productId);
   }
 
   public Inventory getInventoryInCart(Integer productId) throws InventoryNotFoundException {

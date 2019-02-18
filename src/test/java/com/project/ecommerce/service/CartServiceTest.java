@@ -108,13 +108,13 @@ public class CartServiceTest {
   }
 
   @Test(expected = CartNotFoundException.class)
-  public void shouldThrowExceptionIfCartNotFound() {
+  public void shouldThrowExceptionIfCartNotFound() throws CartNotFoundException {
     when(cartRepository.findCartByCustomer_Id(anyInt())).thenReturn(Optional.empty());
     cartService.getCartForCustomer(2);
   }
 
   @Test
-  public void shouldReturnCartForCustomer() {
+  public void shouldReturnCartForCustomer() throws CartNotFoundException {
     Cart cart = mock(Cart.class);
     when(cartRepository.findCartByCustomer_Id(anyInt())).thenReturn(Optional.ofNullable(cart));
     Cart returnedCart = cartService.getCartForCustomer(2);

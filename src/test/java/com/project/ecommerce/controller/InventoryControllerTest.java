@@ -41,7 +41,7 @@ public class InventoryControllerTest {
     Inventory inventory = new Inventory();
     when(inventoryService.addInventoryForProduct(anyString(), anyInt())).thenReturn(inventory);
     mockMvc.perform(
-        post("/inventories/ID-12897654/product/2")
+        post("/inventories/ID-12897654/products/2")
     ).andExpect(status().isOk());
   }
 
@@ -50,7 +50,7 @@ public class InventoryControllerTest {
     Inventory inventory = new Inventory();
     when(inventoryService.addInventoryForProduct(anyString(), anyInt())).thenThrow(new ProductNotFoundException());
     MvcResult result = mockMvc.perform(
-        post("/inventories/ID-12897654/product/2")
+        post("/inventories/ID-12897654/products/2")
     ).andExpect(status().isNotFound()).andReturn();
     String errorMessage = result.getResponse().getErrorMessage();
     assertThat(errorMessage, is("Product not found"));

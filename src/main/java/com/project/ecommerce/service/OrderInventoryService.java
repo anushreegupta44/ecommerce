@@ -31,6 +31,5 @@ public class OrderInventoryService {
       orderInventory.setInventory(cartInventory.getInventory());
       add(orderInventory);
     });
-
   }
 }

@@ -1,4 +1,4 @@
 package com.project.ecommerce.exception;
 
-public class CustomerNotFoundException extends RuntimeException {
+public class CustomerNotFoundException extends Exception {
 }

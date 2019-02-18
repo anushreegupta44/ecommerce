@@ -25,7 +25,7 @@ public class OrderService {
   @Autowired
   private OrderInventoryService orderInventoryService;
 
-  public Order createOrder(List<CartInventory> inventoriesInCart) throws CustomerNotFoundException {
+  public Order createOrder(List<CartInventory> inventoriesInCart) throws CustomerNotFoundException, OrderNotFoundException {
     Order order = new Order();
     order.setCustomer(inventoriesInCart.stream().map(cartInventory -> cartInventory.getCart().getCustomer()).findAny().orElseThrow(CustomerNotFoundException::new));
     order = orderRepository.save(order);
@@ -42,7 +42,7 @@ public class OrderService {
     return orderDetails;
   }
 
-  public OrderDetails calculateOrderTotal(Integer orderId) {
+  public OrderDetails calculateOrderTotal(Integer orderId) throws OrderNotFoundException {
     List<OrderDetail> orderDetails = orderRepository.findOrderDetails(orderId);
     if (isNull(orderDetails) || orderDetails.size() == 0) {
       throw new OrderNotFoundException();
@@ -67,7 +67,7 @@ public class OrderService {
     return orderRepository.findById(orderId).orElseThrow(() -> new OrderNotFoundException());
   }
 
-  public Order addOrderDetails(Integer orderId, OrderDetailsDto orderDetailsDto) {
+  public Order addOrderDetails(Integer orderId, OrderDetailsDto orderDetailsDto) throws OrderNotFoundException {
     Order order = getOrderById(orderId);
     order = addAddressToOrder(order, orderDetailsDto);
     order = addPaymentMethodToOrder(order, orderDetailsDto);

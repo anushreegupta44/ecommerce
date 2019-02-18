@@ -18,7 +18,7 @@ public class InventoryController {
   @Autowired
   private InventoryService inventoryService;
 
-  @PostMapping("/{inventorySku}/product/{productId}")
+  @PostMapping("/{inventorySku}/products/{productId}")
   public ResponseEntity<Inventory> addInventoryForProduct(@PathVariable("inventorySku") String inventorySku,
                                                           @PathVariable("productId") Integer productId) throws ProductNotFoundException {
     return new ResponseEntity(inventoryService.addInventoryForProduct(inventorySku, productId), HttpStatus.OK);

@@ -16,6 +16,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -41,7 +42,7 @@ public class OrderControllerTest {
   @Test
   public void shouldGetOrderDetails() throws Exception {
     OrderDetails orderDetails = new OrderDetails();
-    orderDetails.setOrderDetails(Arrays.asList(new OrderDetail()));
+    orderDetails.setOrderDetails(Collections.singletonList(new OrderDetail()));
     when(orderService.getOrderDetails(anyInt())).thenReturn(orderDetails);
     mockMvc.perform(
         get("/orders/1")

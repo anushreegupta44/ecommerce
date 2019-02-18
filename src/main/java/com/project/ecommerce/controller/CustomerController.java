@@ -18,7 +18,6 @@ public class CustomerController {
   @Autowired
   private CustomerService customerService;
 
-  //I do not create an endpoint for getting all customers because a user will only be able to get their own information and hence details only about themselves
   @GetMapping("/customers/{id}")
   public ResponseEntity getCustomerDetails(@PathVariable("id") Integer customerId) throws CustomerNotFoundException {
     return ResponseEntity.status(HttpStatus.OK).body(customerService.getCustomerDetails(customerId));
