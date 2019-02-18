@@ -4,11 +4,11 @@ import com.project.ecommerce.exception.InventoryAlreadyInCartException;
 import com.project.ecommerce.exception.InventoryNotFoundException;
 import com.project.ecommerce.model.*;
 import com.project.ecommerce.repository.CartInventoryRepository;
-import org.hibernate.exception.ConstraintViolationException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Arrays;

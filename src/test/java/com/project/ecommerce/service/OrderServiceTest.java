@@ -6,7 +6,6 @@ import com.project.ecommerce.exception.CustomerNotFoundException;
 import com.project.ecommerce.exception.OrderNotFoundException;
 import com.project.ecommerce.model.*;
 import com.project.ecommerce.repository.OrderRepository;
-import org.aspectj.weaver.ast.Or;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;

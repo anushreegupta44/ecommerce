@@ -76,9 +76,7 @@ public class OrderService {
 
   public Order addPaymentMethodToOrder(Order order, OrderDetailsDto orderDetailsDto) {
     Optional<PaymentMode> validPaymentMode = getValidPaymentMode(order, orderDetailsDto.getPaymentMode());
-    if (validPaymentMode.isPresent()) {
-      order.setPaymentMode(validPaymentMode.get());
-    }
+    validPaymentMode.ifPresent(order::setPaymentMode);
     return order;
   }
 

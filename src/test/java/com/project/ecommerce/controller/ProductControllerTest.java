@@ -82,7 +82,7 @@ public class ProductControllerTest {
     String incomingProductJson = objectMapper.writeValueAsString(incomingProduct);
     when(productService.updateProduct(2, incomingProduct)).thenReturn(incomingProduct);
     mockMvc.perform(
-        post("/products/2")
+        put("/products/2")
             .content(incomingProductJson)
             .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
     ).andExpect(status().isOk());
@@ -95,7 +95,7 @@ public class ProductControllerTest {
     when(productService.updateProduct(eq(2), any(Product.class))).thenThrow(new ProductNotFoundException());
 
     MvcResult result = mockMvc.perform(
-        post("/products/2")
+        put("/products/2")
             .content(incomingProductJson)
             .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
     ).andExpect(status().isNotFound()).andReturn();
