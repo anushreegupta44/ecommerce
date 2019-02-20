@@ -16,6 +16,10 @@ public class OrderDetails {
   public OrderDetails() {
   }
 
+  public OrderDetails(List<OrderDetail> orderDetails) {
+    this.orderDetails = orderDetails;
+  }
+
   public OrderDetails(List<OrderDetail> orderDetails, Customer customer, Long totalTaxes, Long totalPrice, Address shippingAddress, Address billingAddress) {
     this.orderDetails = orderDetails;
     this.customer = customer;
@@ -23,6 +27,19 @@ public class OrderDetails {
     this.totalPrice = totalPrice;
     this.shippingAddress = shippingAddress;
     this.billingAddress = billingAddress;
+  }
+
+  public void setTotalPrice() {
+    Long totalPrice = 0l;
+    for (OrderDetail od :
+        orderDetails) {
+      totalPrice += od.getPricePerUnit() * od.getCount();
+    }
+    this.totalPrice = totalPrice;
+  }
+
+  public void setTotalTaxes() {
+    this.totalTaxes = Math.multiplyExact((long) 0.12, totalPrice);
   }
 
   public List<OrderDetail> getOrderDetails() {

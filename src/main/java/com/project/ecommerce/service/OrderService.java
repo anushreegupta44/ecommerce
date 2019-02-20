@@ -43,17 +43,14 @@ public class OrderService {
   }
 
   public OrderDetails calculateOrderTotal(Integer orderId) throws OrderNotFoundException {
-    List<OrderDetail> orderDetails = orderRepository.findOrderDetails(orderId);
-    if (isNull(orderDetails) || orderDetails.size() == 0) {
+    List<OrderDetail> orderDetailsList = orderRepository.findOrderDetails(orderId);
+    if (isNull(orderDetailsList) || orderDetailsList.size() == 0) {
       throw new OrderNotFoundException();
     }
-    Long totalPrice = 0l;
-    for (OrderDetail od :
-        orderDetails) {
-      totalPrice += od.getPricePerUnit() * od.getCount();
-    }
-    Long totalTaxes = Math.multiplyExact((long) 0.12, totalPrice);
-    return new OrderDetails(orderDetails, null, totalTaxes, totalPrice, null, null);
+    OrderDetails orderDetails = new OrderDetails(orderDetailsList);
+    orderDetails.setTotalPrice();
+    orderDetails.setTotalTaxes();
+    return orderDetails;
   }
 
   public Order saveOrderTotal(Order createdOrder) throws OrderNotFoundException {

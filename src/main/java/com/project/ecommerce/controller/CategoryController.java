@@ -1,7 +1,6 @@
 package com.project.ecommerce.controller;
 
 import com.project.ecommerce.exception.CategoryNotFoundException;
-import com.project.ecommerce.exception.ProductNotFoundException;
 import com.project.ecommerce.model.Category;
 import com.project.ecommerce.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;

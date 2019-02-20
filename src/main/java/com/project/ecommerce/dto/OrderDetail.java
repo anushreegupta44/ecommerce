@@ -1,7 +1,5 @@
 package com.project.ecommerce.dto;
 
-import java.math.BigDecimal;
-
 public class OrderDetail {
   private Integer productId;
   private String name;
